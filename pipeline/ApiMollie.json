@@ -1,0 +1,98 @@
+{
+	"name": "ApiMollie",
+	"properties": {
+		"activities": [
+			{
+				"name": "RefreshAutoToken",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiMollie_RefreshAuthToken",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PaymentsToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "RefreshAutoToken",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiMollie_PaymentsToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "RefundsToSql",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "PaymentsToSQL",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiMollie_RefundsToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "SettlementsToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "RefundsToSql",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiMollie_SettlementsToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Proeftuin/MolliePayments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

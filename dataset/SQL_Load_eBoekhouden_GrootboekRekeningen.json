@@ -1,0 +1,42 @@
+{
+	"name": "SQL_Load_eBoekhouden_GrootboekRekeningen",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "E-Boekhouden"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Omschrijving",
+				"type": "varchar"
+			},
+			{
+				"name": "Categorie",
+				"type": "varchar"
+			},
+			{
+				"name": "Groep",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Load",
+			"table": "eBoekhouden_Grootboekrekeningen"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

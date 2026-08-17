@@ -1,0 +1,68 @@
+{
+	"name": "SQL_Load_eBoekhouden_Relaties",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "E-Boekhouden"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AddDatum",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Code",
+				"type": "varchar"
+			},
+			{
+				"name": "Bedrijf",
+				"type": "varchar"
+			},
+			{
+				"name": "ContactPersoon",
+				"type": "varchar"
+			},
+			{
+				"name": "Plaats",
+				"type": "varchar"
+			},
+			{
+				"name": "Email",
+				"type": "varchar"
+			},
+			{
+				"name": "BTWNummer",
+				"type": "varchar"
+			},
+			{
+				"name": "KvkNummer",
+				"type": "varchar"
+			},
+			{
+				"name": "IBAN",
+				"type": "varchar"
+			},
+			{
+				"name": "BP",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Load",
+			"table": "eBoekhouden_Relaties"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

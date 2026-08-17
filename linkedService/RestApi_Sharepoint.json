@@ -1,0 +1,13 @@
+{
+	"name": "RestApi_Sharepoint",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://stichtingbrabantmaatjes.sharepoint.com",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}

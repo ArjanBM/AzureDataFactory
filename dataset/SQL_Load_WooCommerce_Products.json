@@ -1,0 +1,65 @@
+{
+	"name": "SQL_Load_WooCommerce_Products",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "WooCommerce"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "sku",
+				"type": "nvarchar"
+			},
+			{
+				"name": "name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "slug",
+				"type": "nvarchar"
+			},
+			{
+				"name": "status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "price",
+				"type": "nvarchar"
+			},
+			{
+				"name": "stock_quantity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "low_stock_amount",
+				"type": "nvarchar"
+			},
+			{
+				"name": "permalink",
+				"type": "nvarchar"
+			},
+			{
+				"name": "categories",
+				"type": "nvarchar"
+			},
+			{
+				"name": "meta_data",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Load",
+			"table": "WooCommerce_Products"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

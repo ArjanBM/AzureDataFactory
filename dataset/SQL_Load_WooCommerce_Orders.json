@@ -1,0 +1,85 @@
+{
+	"name": "SQL_Load_WooCommerce_Orders",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "WooCommerce"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "date_created",
+				"type": "nvarchar"
+			},
+			{
+				"name": "date_modified",
+				"type": "nvarchar"
+			},
+			{
+				"name": "discount_total",
+				"type": "nvarchar"
+			},
+			{
+				"name": "discount_tax",
+				"type": "nvarchar"
+			},
+			{
+				"name": "total",
+				"type": "nvarchar"
+			},
+			{
+				"name": "total_tax",
+				"type": "nvarchar"
+			},
+			{
+				"name": "customer_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "transaction_id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "date_paid",
+				"type": "nvarchar"
+			},
+			{
+				"name": "number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "billing",
+				"type": "nvarchar"
+			},
+			{
+				"name": "line_items",
+				"type": "nvarchar"
+			},
+			{
+				"name": "coupon_lines",
+				"type": "nvarchar"
+			},
+			{
+				"name": "meta_data",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Load",
+			"table": "WooCommerce_Orders"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

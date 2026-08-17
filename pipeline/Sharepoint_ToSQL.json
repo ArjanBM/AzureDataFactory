@@ -1,0 +1,79 @@
+{
+	"name": "Sharepoint_ToSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Activiteiten2026ToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Refresh Sharepoint Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Sharepoint_Activiteiten2026ToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "SharepointListItemsToProductOverview",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Activiteiten2026ToSQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[Model].[SharepointListItemsToProductOverview]"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Refresh Sharepoint Access Token",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Sharepoint_RefreshAuthToken",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Proeftuin/Sharepoint"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,18 @@
+{
+	"name": "BrabantMaatjes",
+	"properties": {
+		"globalConfigurations": {
+			"mountedConfiguration": []
+		},
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1b861273-edc7-400b-abe9-3a5c8fd6e634",
+		"tenantId": "070f728e-bfe7-465b-8bdd-aa9d0d42b6c5"
+	}
+}

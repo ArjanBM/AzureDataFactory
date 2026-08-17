@@ -1,0 +1,28 @@
+{
+	"name": "RestAPI_WooCommerce_Orders",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestAPI_WooCommerce_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"modified_after": {
+				"type": "string",
+				"defaultValue": "2024-01-01T00:00:00Z"
+			}
+		},
+		"folder": {
+			"name": "WooCommerce"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('orders?modified_after=',dataset().modified_after)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

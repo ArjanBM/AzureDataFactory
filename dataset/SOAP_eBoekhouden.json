@@ -1,0 +1,21 @@
+{
+	"name": "SOAP_eBoekhouden",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "eBoekhouden_SOAP",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "E-Boekhouden"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/soap.asmx"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

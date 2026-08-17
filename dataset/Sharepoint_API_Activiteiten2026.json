@@ -1,0 +1,19 @@
+{
+	"name": "Sharepoint_API_Activiteiten2026",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestApi_Sharepoint",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Sharepoint"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "sites/team/_api/web/lists/GetByTitle('Activiteiten 2026')/items?$top=1000"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

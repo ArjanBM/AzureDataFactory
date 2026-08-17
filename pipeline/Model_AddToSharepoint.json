@@ -1,0 +1,130 @@
+{
+	"name": "Model_AddToSharepoint",
+	"properties": {
+		"activities": [
+			{
+				"name": "For Each Activity",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Sharepoint Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Sharepoint List Items').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Sharepoint Create List Item",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"method": "POST",
+								"headers": {
+									"Accept": "application/json;odata=verbose",
+									"Content-Type": "application/json;odata=verbose",
+									"Authorization": {
+										"value": "Bearer @{activity('Get Sharepoint Access Token').output.value}",
+										"type": "Expression"
+									}
+								},
+								"url": {
+									"value": "@concat(\n'https://stichtingbrabantmaatjes.sharepoint.com/sites/team/_api/web/lists/GetByTitle(''Activiteiten 2026'')/Items')\n",
+									"type": "Expression"
+								},
+								"body": {
+									"value": "@concat(\n\t'{\"__metadata\":{\"type\":\"SP.Data.Activiteiten2026ListItem\"},',\n\t\t'\"SKU\":\"',item().sku,'\",',\n\t\t'\"Title\":\"',item().Naam,'\",',\n\t\t'\"field_3\":\"',item().Dag,'\",',\n\t\t'\"field_1\":\"',item().Datum,'\",',\n\t\t'\"field_5\":\"',item().Status,'\",',\n\t\t'\"Kernregio\":\"',item().Kernregio,'\"',\n\t'}'\n)\n",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Get Sharepoint List Items",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[Model].[CreateSharepointListItems]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureDB_BrabantMaatjes",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Get Sharepoint Access Token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get Sharepoint List Items",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-access-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"KeyVaultSecretsUrl": {
+				"type": "string",
+				"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/Sharepoint"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

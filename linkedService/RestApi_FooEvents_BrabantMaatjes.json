@@ -1,0 +1,13 @@
+{
+	"name": "RestApi_FooEvents_BrabantMaatjes",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://shop.brabantmaatjes.nl/wp-json/fooevents/v1/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}

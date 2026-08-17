@@ -1,0 +1,64 @@
+{
+	"name": "SQL_Deelnemers",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Sharepoint"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Naam",
+				"type": "varchar"
+			},
+			{
+				"name": "Email",
+				"type": "varchar"
+			},
+			{
+				"name": "Status",
+				"type": "varchar"
+			},
+			{
+				"name": "Aanmelddatum",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Activiteit_Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FooEvents_Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Aanwezig",
+				"type": "bit"
+			},
+			{
+				"name": "DatumLaatstGewijzigd",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "Load",
+			"table": "Sharepoint_Deelnemers"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

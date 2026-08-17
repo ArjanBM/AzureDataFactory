@@ -1,0 +1,15 @@
+{
+	"name": "RestAPI_WC_BrabantMaatjes_Orders",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://brabantmaatjes.nl/wp-json/wc/v3",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Basic",
+			"userName": "ck_8eaa3f0524082c331e380ca28d3d29c3345c062f",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDI5MTM4QThFLUYwREItNDFGOS05RjFFLTk3NEQ3NEUyMjU0OF81OTU2NzI5OC1mODg4LTQ2MzAtODVlZi1iZjMzM2FmNGFhMTciDQp9"
+		}
+	}
+}

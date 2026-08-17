@@ -1,0 +1,27 @@
+{
+	"name": "RestAPI_Mollie",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestAPI_Mollie",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"RelativeUrl": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "MolliePayments"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().RelativeUrl",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

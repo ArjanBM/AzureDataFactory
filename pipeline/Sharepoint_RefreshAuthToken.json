@@ -1,0 +1,208 @@
+{
+	"name": "Sharepoint_RefreshAuthToken",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Sharepoint Client ID",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-client-id?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get Sharepoint Client Secret",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-client-secret?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get Sharepoint Refresh Token",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-refresh-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Refresh Sharepoint Access Token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get Sharepoint Client ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Sharepoint Client Secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Sharepoint Refresh Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Authorization": {
+							"value": "Basic @{base64(concat(activity('Get Sharepoint Client ID').output.value,':',activity('Get Sharepoint Client Secret').output.value))}",
+							"type": "Expression"
+						},
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"url": "https://login.microsoftonline.com/common/oauth2/token",
+					"body": {
+						"value": "grant_type=refresh_token&refresh_token=@{activity('Get Sharepoint Refresh Token').output.value}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Save New Sharepoint Refresh Token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Refresh Sharepoint Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-refresh-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{\"value\":\"@{activity('Refresh Sharepoint Access Token').output.refresh_token}\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Save New Sharepoint Acces Token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Refresh Sharepoint Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-access-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{\"value\":\"@{activity('Refresh Sharepoint Access Token').output.access_token}\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"KeyVaultSecretsUrl": {
+				"type": "string",
+				"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/Sharepoint"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,53 @@
+{
+	"name": "SQL_Load_Mollie_Refunds",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "MolliePayments"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "nvarchar"
+			},
+			{
+				"name": "createdAt",
+				"type": "nvarchar"
+			},
+			{
+				"name": "amount",
+				"type": "nvarchar"
+			},
+			{
+				"name": "description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "paymentId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "settlementAmount",
+				"type": "nvarchar"
+			},
+			{
+				"name": "settlementId",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Load",
+			"table": "Mollie_Refunds"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,250 @@
+{
+	"name": "ApiWooCommerceProductsToSql",
+	"properties": {
+		"activities": [
+			{
+				"name": "ApiWooCommerceProductsToSQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DatumLaatstGewijzigd",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Products]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['name']"
+								},
+								"sink": {
+									"name": "name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['slug']"
+								},
+								"sink": {
+									"name": "slug",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['permalink']"
+								},
+								"sink": {
+									"name": "permalink",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['status']"
+								},
+								"sink": {
+									"name": "status",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['sku']"
+								},
+								"sink": {
+									"name": "sku",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['price']"
+								},
+								"sink": {
+									"name": "price",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['stock_quantity']"
+								},
+								"sink": {
+									"name": "stock_quantity",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['low_stock_amount']"
+								},
+								"sink": {
+									"name": "low_stock_amount",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['categories']"
+								},
+								"sink": {
+									"name": "categories",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['meta_data']"
+								},
+								"sink": {
+									"name": "meta_data",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['date_modified']"
+								},
+								"sink": {
+									"name": "date_modified"
+								}
+							},
+							{
+								"source": {
+									"path": "$['brands']"
+								},
+								"sink": {
+									"name": "brands"
+								}
+							}
+						],
+						"collectionReference": "",
+						"mapComplexValuesToString": true
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_WooCommerce_Products",
+						"type": "DatasetReference",
+						"parameters": {
+							"modified_after": {
+								"value": "@activity('DatumLaatstGewijzigd').output.firstRow.DatumLaatstGewijzigd",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Load_WooCommerce_Products",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "DatumLaatstGewijzigd",
+				"description": "",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_ProductOverview]\nWHERE [datum] > '2025/12/31'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureDB_BrabantMaatjes",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "MergeFromLoad_WooCommerce_Projects",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "ApiWooCommerceProductsToSQL",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[Model].[MergeFromLoad_WooCommerce_Products]"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"variables": {
+			"DatumLaatstGewijzigd": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/WooCommerce"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

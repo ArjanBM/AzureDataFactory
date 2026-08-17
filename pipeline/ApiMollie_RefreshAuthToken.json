@@ -1,0 +1,208 @@
+{
+	"name": "ApiMollie_RefreshAuthToken",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Mollie Client ID",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-client-id?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get Mollie Client Secret",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-client-secret?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Get Mollie Refresh Token",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-refresh-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Refresh Mollie Access Token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Get Mollie Client ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Mollie Client Secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Get Mollie Refresh Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Authorization": {
+							"value": "Basic @{base64(concat(activity('Get Mollie Client ID').output.value,':',activity('Get Mollie Client Secret').output.value))}",
+							"type": "Expression"
+						},
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					"url": "https://api.mollie.com/oauth2/tokens",
+					"body": {
+						"value": "grant_type=refresh_token&refresh_token=@{activity('Get Mollie Refresh Token').output.value}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Save New Mollie Refresh Token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Refresh Mollie Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-refresh-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{\"value\":\"@{activity('Refresh Mollie Access Token').output.refresh_token}\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Save New Mollie Acces Token",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Refresh Mollie Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-access-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{\"value\":\"@{activity('Refresh Mollie Access Token').output.access_token}\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"KeyVaultSecretsUrl": {
+				"type": "string",
+				"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/MolliePayments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

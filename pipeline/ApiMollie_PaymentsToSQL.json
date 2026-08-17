@@ -1,0 +1,209 @@
+{
+	"name": "ApiMollie_PaymentsToSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Payments To SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Get Mollie Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.060",
+						"requestMethod": "GET",
+						"additionalHeaders": {
+							"Authorization": {
+								"value": "Bearer @{activity('Get Mollie Access Token').output.value}",
+								"type": "Expression"
+							}
+						},
+						"paginationRules": {
+							"AbsoluteUrl": "$._links.next.href"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Payments]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['createdAt']"
+								},
+								"sink": {
+									"name": "createdAt",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['amount']['value']"
+								},
+								"sink": {
+									"name": "amount",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['description']"
+								},
+								"sink": {
+									"name": "description",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['metadata']['order_id']"
+								},
+								"sink": {
+									"name": "order_id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['amountRefunded']['value']"
+								},
+								"sink": {
+									"name": "amountRefunded",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['amountRemaining']['value']"
+								},
+								"sink": {
+									"name": "amountRemaining",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['details']['consumerName']"
+								},
+								"sink": {
+									"name": "consumerName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['details']['consumerAccount']"
+								},
+								"sink": {
+									"name": "consumerAccount",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['settlementId']"
+								},
+								"sink": {
+									"name": "settlementId",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['status']"
+								},
+								"sink": {
+									"name": "status",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['_embedded']['payments']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_Mollie",
+						"type": "DatasetReference",
+						"parameters": {
+							"RelativeUrl": "v2/payments"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Load_Mollie_Payments",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Get Mollie Access Token",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-access-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"KeyVaultSecretsUrl": {
+				"type": "string",
+				"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/MolliePayments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

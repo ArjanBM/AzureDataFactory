@@ -1,0 +1,72 @@
+{
+	"name": "DailyUpdate",
+	"properties": {
+		"activities": [
+			{
+				"name": "Sharepoint",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Sharepoint_ToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "WooCommerce",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Sharepoint",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiWooCommerce",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "SQL_Model_ToSharepoint",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "WooCommerce",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Model_to_Sharepoint",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-08-11T16:43:30Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

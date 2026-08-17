@@ -1,0 +1,182 @@
+{
+	"name": "ApiMollie_SettlementsToSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Settlements To SQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Get Mollie Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"additionalHeaders": {
+							"Authorization": {
+								"value": "Bearer @{activity('Get Mollie Access Token').output.value}",
+								"type": "Expression"
+							}
+						},
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Settlements]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['reference']"
+								},
+								"sink": {
+									"name": "reference",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['createdAt']"
+								},
+								"sink": {
+									"name": "createdAt",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['settledAt']"
+								},
+								"sink": {
+									"name": "settledAt",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['status']"
+								},
+								"sink": {
+									"name": "status",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['amount']['value']"
+								},
+								"sink": {
+									"name": "amount",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['periods']['2023','2024','2025','2026','2027']['01','02','03','04','05','06','07','08','09','10','11','12']['costs']"
+								},
+								"sink": {
+									"name": "costs",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['periods']['2023','2024','2025','2026','2027']['01','02','03','04','05','06','07','08','09','10','11','12']['revenue']"
+								},
+								"sink": {
+									"name": "revenue",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['_embedded']['settlements']",
+						"mapComplexValuesToString": true
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_Mollie",
+						"type": "DatasetReference",
+						"parameters": {
+							"RelativeUrl": "v2/settlements?limit=250"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Load_Mollie_Settlements",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Get Mollie Access Token",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-access-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"KeyVaultSecretsUrl": {
+				"type": "string",
+				"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/MolliePayments"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

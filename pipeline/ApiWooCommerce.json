@@ -1,0 +1,75 @@
+{
+	"name": "ApiWooCommerce",
+	"properties": {
+		"activities": [
+			{
+				"name": "ApiWooCommerceProductsToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiWooCommerceProductsToSql",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ApiWooCommerceOrdersToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ApiFooEventsCheckinToSQL",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiWooCommerceOrdersToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ApiFooEventsCheckinToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ApiWooCommerceProductsToSQL",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiFooEventsCheckinToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Proeftuin/WooCommerce"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

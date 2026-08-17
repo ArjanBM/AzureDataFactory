@@ -1,0 +1,15 @@
+{
+	"name": "RestAPI_WooCommerce_BrabantMaatjes",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://shop.brabantmaatjes.nl/wp-json/wc/v3",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Basic",
+			"userName": "ck_2e7eacec2e7caa2cfa5b380a98fef7466e85c51d",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDI5MTM4QThFLUYwREItNDFGOS05RjFFLTk3NEQ3NEUyMjU0OF8wNGE5NzQzOS05YmM0LTQwMjQtODAzOC01YjE0ODRjNWVhNWUiDQp9"
+		}
+	}
+}

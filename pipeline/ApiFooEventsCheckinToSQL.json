@@ -1,0 +1,179 @@
+{
+	"name": "ApiFooEventsCheckinToSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "ApiFooEventsCheckin",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "DatumLaatstGewijzigd",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.030",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [load].[FooEvents_Checkin]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['Ticket_Id']"
+								},
+								"sink": {
+									"name": "Ticket_Id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"path": "$['Order_Id']"
+								},
+								"sink": {
+									"name": "Order_Id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['Product_Id']"
+								},
+								"sink": {
+									"name": "Product_Id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "$['Ticket_Number']"
+								},
+								"sink": {
+									"name": "Ticket_Number",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['Ticket_Modified']"
+								},
+								"sink": {
+									"name": "Ticket_Modified",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"path": "$['TicketStatus']"
+								},
+								"sink": {
+									"name": "TicketStatus",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['Eventstatus_Modified']"
+								},
+								"sink": {
+									"name": "EventLogStatus_Modified",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"path": "$['EventStatus']"
+								},
+								"sink": {
+									"name": "EventLogStatus",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "",
+						"mapComplexValuesToString": true
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_FooEvents_Checkin",
+						"type": "DatasetReference",
+						"parameters": {
+							"modified_after": {
+								"value": "@activity('DatumLaatstGewijzigd').output.firstRow.DatumLaatstGewijzigd",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Load_FooEvents_Checkin",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "DatumLaatstGewijzigd",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_TicketOverview]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureDB_BrabantMaatjes",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
+		"variables": {
+			"DatumLaatstGewijzigd": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/WooCommerce"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

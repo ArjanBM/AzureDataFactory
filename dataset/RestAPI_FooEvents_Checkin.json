@@ -1,0 +1,28 @@
+{
+	"name": "RestAPI_FooEvents_Checkin",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestApi_FooEvents_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"modified_after": {
+				"type": "string",
+				"defaultValue": "2025-01-01T00:00:00Z"
+			}
+		},
+		"folder": {
+			"name": "WooCommerce"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat('checkin?modified_after=',dataset().modified_after)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

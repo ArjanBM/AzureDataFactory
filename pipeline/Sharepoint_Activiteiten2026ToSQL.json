@@ -1,0 +1,198 @@
+{
+	"name": "Sharepoint_Activiteiten2026ToSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "Sharepoint_Activiteiten2026ToSQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Get Sharepoint Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"additionalColumns": [
+							{
+								"name": "ListJaartal",
+								"value": {
+									"value": "2026",
+									"type": "Expression"
+								}
+							}
+						],
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"additionalHeaders": {
+							"Authorization": {
+								"value": "Bearer @{activity('Get Sharepoint Access Token').output.value}",
+								"type": "Expression"
+							}
+						},
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [Load].[Sharepoint_Activiteiten]",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['Id']"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['Title']"
+								},
+								"sink": {
+									"name": "Title",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['field_1']"
+								},
+								"sink": {
+									"name": "Datum"
+								}
+							},
+							{
+								"source": {
+									"path": "['SKU']"
+								},
+								"sink": {
+									"name": "SKU"
+								}
+							},
+							{
+								"source": {
+									"path": "['field_11']"
+								},
+								"sink": {
+									"name": "Aanmeldingen"
+								}
+							},
+							{
+								"source": {
+									"path": "['DatumLaatsteAanmelding']"
+								},
+								"sink": {
+									"name": "DatumLaatsteAanmelding"
+								}
+							},
+							{
+								"source": {
+									"path": "['Kernregio']"
+								},
+								"sink": {
+									"name": "KernRegio"
+								}
+							},
+							{
+								"source": {
+									"path": "['field_6']"
+								},
+								"sink": {
+									"name": "Opgezet"
+								}
+							},
+							{
+								"source": {
+									"path": "['Activiteitstatus']"
+								},
+								"sink": {
+									"name": "Status"
+								}
+							},
+							{
+								"source": {
+									"path": "['Categorie']"
+								},
+								"sink": {
+									"name": "Categorie"
+								}
+							}
+						],
+						"collectionReference": "$['value']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Sharepoint_API_Activiteiten2026",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Activiteiten",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Get Sharepoint Access Token",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-access-token?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"KeyVaultSecretsUrl": {
+				"type": "string",
+				"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+			}
+		},
+		"folder": {
+			"name": "Proeftuin/Sharepoint"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

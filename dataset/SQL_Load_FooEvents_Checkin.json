@@ -1,0 +1,46 @@
+{
+	"name": "SQL_Load_FooEvents_Checkin",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "WooCommerce"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "Modified",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Bestelling_Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Product_Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EventStatus",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Load",
+			"table": "FooEvents_Checkin"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
