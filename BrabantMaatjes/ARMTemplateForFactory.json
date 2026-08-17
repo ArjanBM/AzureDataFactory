@@ -11,18 +11,6 @@
 			"type": "secureString",
 			"metadata": "Beveiligde tekenreeks voor password van AzureDB_BrabantMaatjes"
 		},
-		"AzureSqlDatabase1_password": {
-			"type": "secureString",
-			"metadata": "Beveiligde tekenreeks voor password van AzureSqlDatabase1"
-		},
-		"FabricDataBase_password": {
-			"type": "secureString",
-			"metadata": "Beveiligde tekenreeks voor password van FabricDataBase"
-		},
-		"RestAPI_WC_BrabantMaatjes_Orders_password": {
-			"type": "secureString",
-			"metadata": "Beveiligde tekenreeks voor password van RestAPI_WC_BrabantMaatjes_Orders"
-		},
 		"RestAPI_WooCommerce_BrabantMaatjes_password": {
 			"type": "secureString",
 			"metadata": "Beveiligde tekenreeks voor password van RestAPI_WooCommerce_BrabantMaatjes"
@@ -43,41 +31,9 @@
 			"type": "string",
 			"defaultValue": "https://KeyVault-DataLoad.vault.azure.net/"
 		},
-		"AzureSqlDatabase1_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "brabantmaatjes.database.windows.net"
-		},
-		"AzureSqlDatabase1_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "BrabantMaatjes"
-		},
-		"AzureSqlDatabase1_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "beheer"
-		},
-		"FabricDataBase_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "rzza6b7hx5nunc65vkoq2qvwyu-qydyu26ytrfeha33qwglm5s2ki.database.fabric.microsoft.com,1433rzza6b7hx5nunc65vkoq2qvwyu-qydyu26ytrfeha33qwglm5s2ki.database.fabric.microsoft.com,1433"
-		},
-		"FabricDataBase_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "DataFactory-b98ebd09-4544-49cb-b2b2-3a1faf590bb9"
-		},
-		"FabricDataBase_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "arjan@brabantmaatjes.nl"
-		},
 		"RestAPI_Mollie_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://api.mollie.com/"
-		},
-		"RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://brabantmaatjes.nl/wp-json/wc/v3"
-		},
-		"RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "ck_8eaa3f0524082c331e380ca28d3d29c3345c062f"
 		},
 		"RestAPI_WooCommerce_BrabantMaatjes_properties_typeProperties_url": {
 			"type": "string",
@@ -4710,53 +4666,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"server": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]",
-					"database": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]",
-					"encrypt": "mandatory",
-					"trustServerCertificate": true,
-					"authenticationType": "SQL",
-					"userName": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('AzureSqlDatabase1_password')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/FabricDataBase')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"server": "[parameters('FabricDataBase_properties_typeProperties_server')]",
-					"database": "[parameters('FabricDataBase_properties_typeProperties_database')]",
-					"encrypt": "strict",
-					"trustServerCertificate": true,
-					"authenticationType": "Windows",
-					"userName": "[parameters('FabricDataBase_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('FabricDataBase_password')]"
-					},
-					"alwaysEncryptedSettings": {
-						"alwaysEncryptedAkvAuthType": "ManagedIdentity"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/RestAPI_Mollie')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -4767,26 +4676,6 @@
 					"url": "[parameters('RestAPI_Mollie_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RestAPI_WC_BrabantMaatjes_Orders')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_password')]"
-					}
 				}
 			},
 			"dependsOn": []

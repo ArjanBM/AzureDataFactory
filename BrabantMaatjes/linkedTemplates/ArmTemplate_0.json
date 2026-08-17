@@ -11,18 +11,6 @@
 			"type": "secureString",
 			"metadata": "Beveiligde tekenreeks voor password van AzureDB_BrabantMaatjes"
 		},
-		"AzureSqlDatabase1_password": {
-			"type": "secureString",
-			"metadata": "Beveiligde tekenreeks voor password van AzureSqlDatabase1"
-		},
-		"FabricDataBase_password": {
-			"type": "secureString",
-			"metadata": "Beveiligde tekenreeks voor password van FabricDataBase"
-		},
-		"RestAPI_WC_BrabantMaatjes_Orders_password": {
-			"type": "secureString",
-			"metadata": "Beveiligde tekenreeks voor password van RestAPI_WC_BrabantMaatjes_Orders"
-		},
 		"RestAPI_WooCommerce_BrabantMaatjes_password": {
 			"type": "secureString",
 			"metadata": "Beveiligde tekenreeks voor password van RestAPI_WooCommerce_BrabantMaatjes"
@@ -43,41 +31,9 @@
 			"type": "string",
 			"defaultValue": "https://KeyVault-DataLoad.vault.azure.net/"
 		},
-		"AzureSqlDatabase1_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "brabantmaatjes.database.windows.net"
-		},
-		"AzureSqlDatabase1_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "BrabantMaatjes"
-		},
-		"AzureSqlDatabase1_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "beheer"
-		},
-		"FabricDataBase_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "rzza6b7hx5nunc65vkoq2qvwyu-qydyu26ytrfeha33qwglm5s2ki.database.fabric.microsoft.com,1433rzza6b7hx5nunc65vkoq2qvwyu-qydyu26ytrfeha33qwglm5s2ki.database.fabric.microsoft.com,1433"
-		},
-		"FabricDataBase_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "DataFactory-b98ebd09-4544-49cb-b2b2-3a1faf590bb9"
-		},
-		"FabricDataBase_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "arjan@brabantmaatjes.nl"
-		},
 		"RestAPI_Mollie_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://api.mollie.com/"
-		},
-		"RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://brabantmaatjes.nl/wp-json/wc/v3"
-		},
-		"RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "ck_8eaa3f0524082c331e380ca28d3d29c3345c062f"
 		},
 		"RestAPI_WooCommerce_BrabantMaatjes_properties_typeProperties_url": {
 			"type": "string",
@@ -577,53 +533,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"server": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]",
-					"database": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]",
-					"encrypt": "mandatory",
-					"trustServerCertificate": true,
-					"authenticationType": "SQL",
-					"userName": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('AzureSqlDatabase1_password')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/FabricDataBase')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"server": "[parameters('FabricDataBase_properties_typeProperties_server')]",
-					"database": "[parameters('FabricDataBase_properties_typeProperties_database')]",
-					"encrypt": "strict",
-					"trustServerCertificate": true,
-					"authenticationType": "Windows",
-					"userName": "[parameters('FabricDataBase_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('FabricDataBase_password')]"
-					},
-					"alwaysEncryptedSettings": {
-						"alwaysEncryptedAkvAuthType": "ManagedIdentity"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/RestAPI_Mollie')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -634,26 +543,6 @@
 					"url": "[parameters('RestAPI_Mollie_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/RestAPI_WC_BrabantMaatjes_Orders')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_password')]"
-					}
 				}
 			},
 			"dependsOn": []
@@ -985,6 +874,193 @@
 				"typeProperties": {
 					"schema": "Load",
 					"table": "Sharepoint_Activiteiten2025"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Deelnemers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Sharepoint"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Naam",
+						"type": "varchar"
+					},
+					{
+						"name": "Email",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Aanmelddatum",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Activiteit_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FooEvents_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Aanwezig",
+						"type": "bit"
+					},
+					{
+						"name": "DatumLaatstGewijzigd",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Sharepoint_Deelnemers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_FooEvents_Checkin')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Bestelling_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Product_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EventStatus",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "FooEvents_Checkin"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Payments')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "MolliePayments"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "createdAt",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "order_id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amountRefunded",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amountRemaining",
+						"type": "nvarchar"
+					},
+					{
+						"name": "consumerName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "consumerAccount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "settlementId",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Mollie_Payments"
 				}
 			},
 			"dependsOn": [
