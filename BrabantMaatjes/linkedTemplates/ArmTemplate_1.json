@@ -2863,9 +2863,9 @@
 									"type": "Copy",
 									"dependsOn": [
 										{
-											"activity": "VariablesForGetMutaties",
+											"activity": "GetSessionIDForMutaties",
 											"dependencyConditions": [
-												"Completed"
+												"Succeeded"
 											]
 										}
 									],
@@ -2885,7 +2885,7 @@
 												"requestMethod": "POST",
 												"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetMutaties\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
 												"requestBody": {
-													"value": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <eb:GetMutaties>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter>\n            <eb:DatumVan>@{activity('VariablesForGetMutaties').output.firstRow.DatumVan}</eb:DatumVan>\n            <eb:DatumTm>@{activity('VariablesForGetMutaties').output.firstRow.DatumTm}</eb:DatumTm>\n         </eb:cFilter>\n      </eb:GetMutaties>\n   </soapenv:Body>\n</soapenv:Envelope>\n\n",
+													"value": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <eb:GetMutaties>\n         <eb:SessionID>@{json(xml(replace(string(xml(activity('GetSessionID').output.Response)), ':', ''))).soapEnvelope.soapBody.OpenSessionResponse.OpenSessionResult.SessionID}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter>\n            <eb:DatumVan>@{activity('VariablesForGetMutaties').output.firstRow.DatumVan}</eb:DatumVan>\n            <eb:DatumTm>@{activity('VariablesForGetMutaties').output.firstRow.DatumTm}</eb:DatumTm>\n         </eb:cFilter>\n      </eb:GetMutaties>\n   </soapenv:Body>\n</soapenv:Envelope>\n\n",
 													"type": "Expression"
 												},
 												"requestTimeout": ""
@@ -3063,6 +3063,36 @@
 											"value": "@{bool(activity('VariablesForGetMutaties').output.firstRow.Result)}",
 											"type": "Expression"
 										}
+									}
+								},
+								{
+									"name": "GetSessionIDForMutaties",
+									"type": "WebActivity",
+									"dependsOn": [
+										{
+											"activity": "VariablesForGetMutaties",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "POST",
+										"headers": {
+											"Host": "soap.e-boekhouden.nl",
+											"Content-Type": " application/soap+xml;charset=UTF-8;action=\"http://www.e-boekhouden.nl/soap/OpenSession\"",
+											"Connection": "Keep-Alive"
+										},
+										"url": "https://soap.e-boekhouden.nl/soap.asmx",
+										"body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n\t<soap:Header/>\n\t<soap:Body>\n\t\t<eb:OpenSession>\n\t\t\t<eb:Username>arjan@brabantmaatjes.nl</eb:Username>\n\t\t\t<eb:SecurityCode1>9ce115f379a03251613590375ab0e62f</eb:SecurityCode1>\n\t\t\t<eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n\t\t</eb:OpenSession>\n\t</soap:Body>\n</soap:Envelope>"
 									}
 								}
 							],
