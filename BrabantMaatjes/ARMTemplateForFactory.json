@@ -1,0 +1,4899 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory-naam",
+			"defaultValue": "BrabantMaatjes"
+		},
+		"AzureDB_BrabantMaatjes_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van AzureDB_BrabantMaatjes"
+		},
+		"AzureSqlDatabase1_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van AzureSqlDatabase1"
+		},
+		"FabricDataBase_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van FabricDataBase"
+		},
+		"RestAPI_WC_BrabantMaatjes_Orders_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van RestAPI_WC_BrabantMaatjes_Orders"
+		},
+		"RestAPI_WooCommerce_BrabantMaatjes_password": {
+			"type": "secureString",
+			"metadata": "Beveiligde tekenreeks voor password van RestAPI_WooCommerce_BrabantMaatjes"
+		},
+		"AzureDB_BrabantMaatjes_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "brabantmaatjes.database.windows.net"
+		},
+		"AzureDB_BrabantMaatjes_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "BrabantMaatjes"
+		},
+		"AzureDB_BrabantMaatjes_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "beheer"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://KeyVault-DataLoad.vault.azure.net/"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "brabantmaatjes.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "BrabantMaatjes"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "beheer"
+		},
+		"FabricDataBase_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rzza6b7hx5nunc65vkoq2qvwyu-qydyu26ytrfeha33qwglm5s2ki.database.fabric.microsoft.com,1433rzza6b7hx5nunc65vkoq2qvwyu-qydyu26ytrfeha33qwglm5s2ki.database.fabric.microsoft.com,1433"
+		},
+		"FabricDataBase_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "DataFactory-b98ebd09-4544-49cb-b2b2-3a1faf590bb9"
+		},
+		"FabricDataBase_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "arjan@brabantmaatjes.nl"
+		},
+		"RestAPI_Mollie_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.mollie.com/"
+		},
+		"RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://brabantmaatjes.nl/wp-json/wc/v3"
+		},
+		"RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ck_8eaa3f0524082c331e380ca28d3d29c3345c062f"
+		},
+		"RestAPI_WooCommerce_BrabantMaatjes_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://shop.brabantmaatjes.nl/wp-json/wc/v3"
+		},
+		"RestAPI_WooCommerce_BrabantMaatjes_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "ck_2e7eacec2e7caa2cfa5b380a98fef7466e85c51d"
+		},
+		"RestApi_FooEvents_BrabantMaatjes_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://shop.brabantmaatjes.nl/wp-json/fooevents/v1/"
+		},
+		"RestApi_Sharepoint_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stichtingbrabantmaatjes.sharepoint.com"
+		},
+		"eBoekhouden_SOAP_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://soap.e-boekhouden.nl"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiFooEventsCheckinToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ApiFooEventsCheckin",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DatumLaatstGewijzigd",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.030",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [load].[FooEvents_Checkin]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['Ticket_Id']"
+										},
+										"sink": {
+											"name": "Ticket_Id",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Order_Id']"
+										},
+										"sink": {
+											"name": "Order_Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Product_Id']"
+										},
+										"sink": {
+											"name": "Product_Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Ticket_Number']"
+										},
+										"sink": {
+											"name": "Ticket_Number",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Ticket_Modified']"
+										},
+										"sink": {
+											"name": "Ticket_Modified",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"path": "$['TicketStatus']"
+										},
+										"sink": {
+											"name": "TicketStatus",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['Eventstatus_Modified']"
+										},
+										"sink": {
+											"name": "EventLogStatus_Modified",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"path": "$['EventStatus']"
+										},
+										"sink": {
+											"name": "EventLogStatus",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "",
+								"mapComplexValuesToString": true
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RestAPI_FooEvents_Checkin",
+								"type": "DatasetReference",
+								"parameters": {
+									"modified_after": {
+										"value": "@activity('DatumLaatstGewijzigd').output.firstRow.DatumLaatstGewijzigd",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_FooEvents_Checkin",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "DatumLaatstGewijzigd",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_TicketOverview]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDB_BrabantMaatjes",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"DatumLaatstGewijzigd": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/WooCommerce"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RestAPI_FooEvents_Checkin')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_FooEvents_Checkin')]",
+				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiMollie')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RefreshAutoToken",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_RefreshAuthToken",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "PaymentsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "RefreshAutoToken",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_PaymentsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "RefundsToSql",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "PaymentsToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_RefundsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "SettlementsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "RefundsToSql",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_SettlementsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Proeftuin/MolliePayments"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_RefreshAuthToken')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_PaymentsToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_RefundsToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_SettlementsToSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiMollie_PaymentsToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Payments To SQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get Mollie Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.060",
+								"requestMethod": "GET",
+								"additionalHeaders": {
+									"Authorization": {
+										"value": "Bearer @{activity('Get Mollie Access Token').output.value}",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"AbsoluteUrl": "$._links.next.href"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Payments]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['createdAt']"
+										},
+										"sink": {
+											"name": "createdAt",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['amount']['value']"
+										},
+										"sink": {
+											"name": "amount",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['description']"
+										},
+										"sink": {
+											"name": "description",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['metadata']['order_id']"
+										},
+										"sink": {
+											"name": "order_id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['amountRefunded']['value']"
+										},
+										"sink": {
+											"name": "amountRefunded",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['amountRemaining']['value']"
+										},
+										"sink": {
+											"name": "amountRemaining",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['details']['consumerName']"
+										},
+										"sink": {
+											"name": "consumerName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['details']['consumerAccount']"
+										},
+										"sink": {
+											"name": "consumerAccount",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['settlementId']"
+										},
+										"sink": {
+											"name": "settlementId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['status']"
+										},
+										"sink": {
+											"name": "status",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['_embedded']['payments']",
+								"mapComplexValuesToString": false
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RestAPI_Mollie",
+								"type": "DatasetReference",
+								"parameters": {
+									"RelativeUrl": "v2/payments"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_Mollie_Payments",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get Mollie Access Token",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/MolliePayments"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RestAPI_Mollie')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_Mollie_Payments')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiMollie_RefreshAuthToken')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Mollie Client ID",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-client-id?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Get Mollie Client Secret",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-client-secret?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Get Mollie Refresh Token",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-refresh-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Refresh Mollie Access Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get Mollie Client ID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Get Mollie Client Secret",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Get Mollie Refresh Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "Basic @{base64(concat(activity('Get Mollie Client ID').output.value,':',activity('Get Mollie Client Secret').output.value))}",
+									"type": "Expression"
+								},
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							"url": "https://api.mollie.com/oauth2/tokens",
+							"body": {
+								"value": "grant_type=refresh_token&refresh_token=@{activity('Get Mollie Refresh Token').output.value}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Save New Mollie Refresh Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Refresh Mollie Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "PUT",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-refresh-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"body": {
+								"value": "{\"value\":\"@{activity('Refresh Mollie Access Token').output.refresh_token}\"}",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Save New Mollie Acces Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Refresh Mollie Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "PUT",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"body": {
+								"value": "{\"value\":\"@{activity('Refresh Mollie Access Token').output.access_token}\"}",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/MolliePayments"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiMollie_RefundsToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Payments To SQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get Mollie Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.060",
+								"requestMethod": "GET",
+								"additionalHeaders": {
+									"Authorization": {
+										"value": "Bearer @{activity('Get Mollie Access Token').output.value}",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"AbsoluteUrl": "$._links.next.href"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Refunds]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['amount']['value']"
+										},
+										"sink": {
+											"name": "amount",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['status']"
+										},
+										"sink": {
+											"name": "status",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['createdAt']"
+										},
+										"sink": {
+											"name": "createdAt",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['description']"
+										},
+										"sink": {
+											"name": "description",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['paymentId']"
+										},
+										"sink": {
+											"name": "paymentId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['settlementId']"
+										},
+										"sink": {
+											"name": "settlementId",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['[\\'settlementAmount\\'][\\'value\\']']"
+										},
+										"sink": {
+											"name": "settlementAmount",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['_embedded']['refunds']",
+								"mapComplexValuesToString": false
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RestAPI_Mollie",
+								"type": "DatasetReference",
+								"parameters": {
+									"RelativeUrl": "v2/refunds"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_Mollie_Refunds",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get Mollie Access Token",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/MolliePayments"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RestAPI_Mollie')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_Mollie_Refunds')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiMollie_SettlementsToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Settlements To SQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get Mollie Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"additionalHeaders": {
+									"Authorization": {
+										"value": "Bearer @{activity('Get Mollie Access Token').output.value}",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Settlements]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['reference']"
+										},
+										"sink": {
+											"name": "reference",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['createdAt']"
+										},
+										"sink": {
+											"name": "createdAt",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['settledAt']"
+										},
+										"sink": {
+											"name": "settledAt",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['status']"
+										},
+										"sink": {
+											"name": "status",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['amount']['value']"
+										},
+										"sink": {
+											"name": "amount",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['periods']['2023','2024','2025','2026','2027']['01','02','03','04','05','06','07','08','09','10','11','12']['costs']"
+										},
+										"sink": {
+											"name": "costs",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['periods']['2023','2024','2025','2026','2027']['01','02','03','04','05','06','07','08','09','10','11','12']['revenue']"
+										},
+										"sink": {
+											"name": "revenue",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['_embedded']['settlements']",
+								"mapComplexValuesToString": true
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RestAPI_Mollie",
+								"type": "DatasetReference",
+								"parameters": {
+									"RelativeUrl": "v2/settlements?limit=250"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_Mollie_Settlements",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get Mollie Access Token",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}mollie-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/MolliePayments"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RestAPI_Mollie')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_Mollie_Settlements')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiWooCommerce')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ApiWooCommerceProductsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiWooCommerceProductsToSql",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "ApiWooCommerceOrdersToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ApiFooEventsCheckinToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiWooCommerceOrdersToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "ApiFooEventsCheckinToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ApiWooCommerceProductsToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiFooEventsCheckinToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Proeftuin/WooCommerce"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerceProductsToSql')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerceOrdersToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiFooEventsCheckinToSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiWooCommerceOrdersToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ApiWooCommerceOrdersToSQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DatumLaatstGewijzigd",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.030",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Orders]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['status']"
+										},
+										"sink": {
+											"name": "status",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['date_created']"
+										},
+										"sink": {
+											"name": "date_created",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['date_modified']"
+										},
+										"sink": {
+											"name": "date_modified",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['discount_total']"
+										},
+										"sink": {
+											"name": "discount_total",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['discount_tax']"
+										},
+										"sink": {
+											"name": "discount_tax",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['total']"
+										},
+										"sink": {
+											"name": "total",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['total_tax']"
+										},
+										"sink": {
+											"name": "total_tax",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['customer_id']"
+										},
+										"sink": {
+											"name": "customer_id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['transaction_id']"
+										},
+										"sink": {
+											"name": "transaction_id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['date_paid']"
+										},
+										"sink": {
+											"name": "date_paid",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['number']"
+										},
+										"sink": {
+											"name": "number",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['billing']"
+										},
+										"sink": {
+											"name": "billing",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['line_items']"
+										},
+										"sink": {
+											"name": "line_items",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['coupon_lines']"
+										},
+										"sink": {
+											"name": "coupon_lines",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['meta_data']"
+										},
+										"sink": {
+											"name": "meta_data"
+										}
+									}
+								],
+								"mapComplexValuesToString": true
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RestAPI_WooCommerce_Orders",
+								"type": "DatasetReference",
+								"parameters": {
+									"modified_after": {
+										"value": "@activity('DatumLaatstGewijzigd').output.firstRow.DatumLaatstGewijzigd",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_WooCommerce_Orders",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "DatumLaatstGewijzigd",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([Datum_Bestelling]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_OrderOverview]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDB_BrabantMaatjes",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "MergeFromLoad_WooCommerce_OrderRegels",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ApiWooCommerceOrdersToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Model].[MergeFromLoad_WooCommerce_TicketOverview]"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDB_BrabantMaatjes",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"DatumLaatstGewijzigd": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/WooCommerce"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RestAPI_WooCommerce_Orders')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_WooCommerce_Orders')]",
+				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiWooCommerceProductsToSql')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ApiWooCommerceProductsToSQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "DatumLaatstGewijzigd",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Products]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['id']"
+										},
+										"sink": {
+											"name": "id",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['name']"
+										},
+										"sink": {
+											"name": "name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['slug']"
+										},
+										"sink": {
+											"name": "slug",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['permalink']"
+										},
+										"sink": {
+											"name": "permalink",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['status']"
+										},
+										"sink": {
+											"name": "status",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['sku']"
+										},
+										"sink": {
+											"name": "sku",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['price']"
+										},
+										"sink": {
+											"name": "price",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['stock_quantity']"
+										},
+										"sink": {
+											"name": "stock_quantity",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['low_stock_amount']"
+										},
+										"sink": {
+											"name": "low_stock_amount",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['categories']"
+										},
+										"sink": {
+											"name": "categories",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['meta_data']"
+										},
+										"sink": {
+											"name": "meta_data",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['date_modified']"
+										},
+										"sink": {
+											"name": "date_modified"
+										}
+									},
+									{
+										"source": {
+											"path": "$['brands']"
+										},
+										"sink": {
+											"name": "brands"
+										}
+									}
+								],
+								"collectionReference": "",
+								"mapComplexValuesToString": true
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "RestAPI_WooCommerce_Products",
+								"type": "DatasetReference",
+								"parameters": {
+									"modified_after": {
+										"value": "@activity('DatumLaatstGewijzigd').output.firstRow.DatumLaatstGewijzigd",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_WooCommerce_Products",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "DatumLaatstGewijzigd",
+						"description": "",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_ProductOverview]\nWHERE [datum] > '2025/12/31'",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDB_BrabantMaatjes",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "MergeFromLoad_WooCommerce_Projects",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "ApiWooCommerceProductsToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Model].[MergeFromLoad_WooCommerce_Products]"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDB_BrabantMaatjes",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"DatumLaatstGewijzigd": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/WooCommerce"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/RestAPI_WooCommerce_Products')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_WooCommerce_Products')]",
+				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DailyUpdate')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Sharepoint",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Sharepoint_ToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "WooCommerce",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Sharepoint",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiWooCommerce",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "SQL_Model_ToSharepoint",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "WooCommerce",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Model_to_Sharepoint",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-11T16:43:30Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Sharepoint_ToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerce')]",
+				"[concat(variables('factoryId'), '/pipelines/Model_to_Sharepoint')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Model_AddToSharepoint')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "For Each Activity",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Sharepoint Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Sharepoint List Items').output.value",
+								"type": "Expression"
+							},
+							"isSequential": false,
+							"activities": [
+								{
+									"name": "Sharepoint Create List Item",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "POST",
+										"headers": {
+											"Accept": "application/json;odata=verbose",
+											"Content-Type": "application/json;odata=verbose",
+											"Authorization": {
+												"value": "Bearer @{activity('Get Sharepoint Access Token').output.value}",
+												"type": "Expression"
+											}
+										},
+										"url": {
+											"value": "@concat(\n'https://stichtingbrabantmaatjes.sharepoint.com/sites/team/_api/web/lists/GetByTitle(''Activiteiten 2026'')/Items')\n",
+											"type": "Expression"
+										},
+										"body": {
+											"value": "@concat(\n\t'{\"__metadata\":{\"type\":\"SP.Data.Activiteiten2026ListItem\"},',\n\t\t'\"SKU\":\"',item().sku,'\",',\n\t\t'\"Title\":\"',item().Naam,'\",',\n\t\t'\"field_3\":\"',item().Dag,'\",',\n\t\t'\"field_1\":\"',item().Datum,'\",',\n\t\t'\"field_5\":\"',item().Status,'\",',\n\t\t'\"Kernregio\":\"',item().Kernregio,'\"',\n\t'}'\n)\n",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Get Sharepoint List Items",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[Model].[CreateSharepointListItems]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDB_BrabantMaatjes",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Get Sharepoint Access Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get Sharepoint List Items",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Model_UpdateSharepoint')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "For Each Activity",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Sharepoint Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Sharepoint List Items').output.value",
+								"type": "Expression"
+							},
+							"isSequential": false,
+							"activities": [
+								{
+									"name": "Sharepoint Update List Item",
+									"type": "WebActivity",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"method": "POST",
+										"headers": {
+											"If-Match": "*",
+											"X-HTTP-Method": "MERGE",
+											"Accept": "application/json;odata=verbose",
+											"Content-Type": "application/json;odata=verbose",
+											"Authorization": {
+												"value": "Bearer @{activity('Get Sharepoint Access Token').output.value}",
+												"type": "Expression"
+											}
+										},
+										"url": {
+											"value": "@concat(\n'https://stichtingbrabantmaatjes.sharepoint.com/sites/team/_api/web/lists/GetByTitle(''Activiteiten 2026'')/Items(',\nitem().Sharepoint_Activiteiten_Id,\n')')\n",
+											"type": "Expression"
+										},
+										"body": {
+											"value": "@concat(\n\t'{\"__metadata\":{\"type\":\"SP.Data.Activiteiten2026ListItem\"},',\n\t\t'\"field_11\":',item().Inschrijvingen,',',\n\t\t'\"DatumLaatsteAanmelding\":\"',item().DatumLaatsteInschrijving,'\",',\n\t\t'\"field_10\":',item().AantalTickets,',',\n\t\t'\"Deelnemers\":\"',item().Deelnemers,'\"',\n\t'}'\n)\n",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Get Sharepoint List Items",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[Model].[UpdateSharepointListItems]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "AzureDB_BrabantMaatjes",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "Get Sharepoint Access Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get Sharepoint List Items",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Model_to_Sharepoint')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Refresh Sharepoint Access Token",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Sharepoint_RefreshAuthToken",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Model_UpdateSharepoint",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Refresh Sharepoint Access Token",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Model_UpdateSharepoint",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Model_AddToSharepoint",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Model_UpdateSharepoint",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Model_AddToSharepoint",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Proeftuin/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Sharepoint_RefreshAuthToken')]",
+				"[concat(variables('factoryId'), '/pipelines/Model_UpdateSharepoint')]",
+				"[concat(variables('factoryId'), '/pipelines/Model_AddToSharepoint')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sharepoint_Activiteiten2026ToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Sharepoint_Activiteiten2026ToSQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get Sharepoint Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"additionalColumns": [
+									{
+										"name": "ListJaartal",
+										"value": {
+											"value": "2026",
+											"type": "Expression"
+										}
+									}
+								],
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"additionalHeaders": {
+									"Authorization": {
+										"value": "Bearer @{activity('Get Sharepoint Access Token').output.value}",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [Load].[Sharepoint_Activiteiten]",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['Id']"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Title']"
+										},
+										"sink": {
+											"name": "Title",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['field_1']"
+										},
+										"sink": {
+											"name": "Datum"
+										}
+									},
+									{
+										"source": {
+											"path": "[['SKU']"
+										},
+										"sink": {
+											"name": "SKU"
+										}
+									},
+									{
+										"source": {
+											"path": "[['field_11']"
+										},
+										"sink": {
+											"name": "Aanmeldingen"
+										}
+									},
+									{
+										"source": {
+											"path": "[['DatumLaatsteAanmelding']"
+										},
+										"sink": {
+											"name": "DatumLaatsteAanmelding"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Kernregio']"
+										},
+										"sink": {
+											"name": "KernRegio"
+										}
+									},
+									{
+										"source": {
+											"path": "[['field_6']"
+										},
+										"sink": {
+											"name": "Opgezet"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Activiteitstatus']"
+										},
+										"sink": {
+											"name": "Status"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Categorie']"
+										},
+										"sink": {
+											"name": "Categorie"
+										}
+									}
+								],
+								"collectionReference": "$['value']",
+								"mapComplexValuesToString": false
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Sharepoint_API_Activiteiten2026",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Activiteiten",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get Sharepoint Access Token",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Sharepoint_API_Activiteiten2026')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Activiteiten')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sharepoint_RefreshAuthToken')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Sharepoint Client ID",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-client-id?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Get Sharepoint Client Secret",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-client-secret?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Get Sharepoint Refresh Token",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-refresh-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Refresh Sharepoint Access Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Get Sharepoint Client ID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Get Sharepoint Client Secret",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Get Sharepoint Refresh Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Authorization": {
+									"value": "Basic @{base64(concat(activity('Get Sharepoint Client ID').output.value,':',activity('Get Sharepoint Client Secret').output.value))}",
+									"type": "Expression"
+								},
+								"Content-Type": "application/x-www-form-urlencoded"
+							},
+							"url": "https://login.microsoftonline.com/common/oauth2/token",
+							"body": {
+								"value": "grant_type=refresh_token&refresh_token=@{activity('Get Sharepoint Refresh Token').output.value}",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Save New Sharepoint Refresh Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Refresh Sharepoint Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "PUT",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-refresh-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"body": {
+								"value": "{\"value\":\"@{activity('Refresh Sharepoint Access Token').output.refresh_token}\"}",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Save New Sharepoint Acces Token",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Refresh Sharepoint Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "PUT",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.KeyVaultSecretsUrl}sharepoint-access-token?api-version=7.0",
+								"type": "Expression"
+							},
+							"body": {
+								"value": "{\"value\":\"@{activity('Refresh Sharepoint Access Token').output.access_token}\"}",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"KeyVaultSecretsUrl": {
+						"type": "string",
+						"defaultValue": "https://keyvault-dataload.vault.azure.net/secrets/"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sharepoint_ToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Activiteiten2026ToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Refresh Sharepoint Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Sharepoint_Activiteiten2026ToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "SharepointListItemsToProductOverview",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Activiteiten2026ToSQL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Model].[SharepointListItemsToProductOverview]"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDB_BrabantMaatjes",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Refresh Sharepoint Access Token",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Sharepoint_RefreshAuthToken",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Proeftuin/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Sharepoint_Activiteiten2026ToSQL')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]",
+				"[concat(variables('factoryId'), '/pipelines/Sharepoint_RefreshAuthToken')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SoapEBoekhouden')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "SoapEBoekhoudenMasterdataToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "SoapEBoekhoudenMasterdataToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "SoapEBoekhoudenMutatiesToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "SoapEBoekhoudenMasterdataToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "SoapEBoekhoudenMutatiesToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Proeftuin/E-Boekhouden"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/SoapEBoekhoudenMasterdataToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/SoapEBoekhoudenMutatiesToSQL')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SoapEBoekhoudenMasterdataToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetSessionID",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Host": "soap.e-boekhouden.nl",
+								"Content-Type": " application/soap+xml;charset=UTF-8;action=\"http://www.e-boekhouden.nl/soap/OpenSession\"",
+								"Connection": "Keep-Alive"
+							},
+							"url": "https://soap.e-boekhouden.nl/soap.asmx",
+							"body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n\t<soap:Header/>\n\t<soap:Body>\n\t\t<eb:OpenSession>\n\t\t\t<eb:Username>arjan@brabantmaatjes.nl</eb:Username>\n\t\t\t<eb:SecurityCode1>9ce115f379a03251613590375ab0e62f</eb:SecurityCode1>\n\t\t\t<eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n\t\t</eb:OpenSession>\n\t</soap:Body>\n</soap:Envelope>"
+						}
+					},
+					{
+						"name": "SetSessionId",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "GetSessionID",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "SessionId",
+							"value": {
+								"value": "@json(xml(replace(string(xml(activity('GetSessionID').output.Response)), ':', ''))).soapEnvelope.soapBody.OpenSessionResponse.OpenSessionResult.SessionID",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "GetRelatiesToSQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "TruncateTables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "XmlSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "POST",
+									"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetRelaties\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
+									"requestBody": {
+										"value": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soap:Header/>\n   <soap:Body>\n      <eb:GetRelaties>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter></eb:cFilter>\n      </eb:GetRelaties>\n   </soap:Body>\n</soap:Envelope>",
+										"type": "Expression"
+									},
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "XmlReadSettings",
+									"validationMode": "none",
+									"namespaces": true
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['ID']"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "[['AddDatum']"
+										},
+										"sink": {
+											"name": "AddDatum",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Code']"
+										},
+										"sink": {
+											"name": "Code",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Bedrijf']"
+										},
+										"sink": {
+											"name": "Bedrijf",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Plaats']"
+										},
+										"sink": {
+											"name": "Plaats",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Contactpersoon']"
+										},
+										"sink": {
+											"name": "ContactPersoon",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Email']"
+										},
+										"sink": {
+											"name": "Email",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['BTWNummer']"
+										},
+										"sink": {
+											"name": "BTWNummer",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['KvkNummer']"
+										},
+										"sink": {
+											"name": "KvkNummer",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['IBAN']"
+										},
+										"sink": {
+											"name": "IBAN",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['BP']"
+										},
+										"sink": {
+											"name": "BP",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['soap:Envelope']['soap:Body']['GetRelatiesResponse']['GetRelatiesResult']['Relaties']['cRelatie']",
+								"mapComplexValuesToString": false
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SOAP_eBoekhouden",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_eBoekhouden_Relaties",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "GetGrootboekrekeningenToSQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "GetRelatiesToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "XmlSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "POST",
+									"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetGrootboekrekeningen\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
+									"requestBody": {
+										"value": "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soap:Header/>\n   <soap:Body>\n      <eb:GetGrootboekrekeningen>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter></eb:cFilter>\n      </eb:GetGrootboekrekeningen>\n   </soap:Body>\n</soap:Envelope>",
+										"type": "Expression"
+									},
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "XmlReadSettings",
+									"validationMode": "none",
+									"namespaces": true
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['ID']"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Code']"
+										},
+										"sink": {
+											"name": "Code",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Omschrijving']"
+										},
+										"sink": {
+											"name": "Omschrijving",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Categorie']"
+										},
+										"sink": {
+											"name": "Categorie",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Groep']"
+										},
+										"sink": {
+											"name": "Groep",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['soap:Envelope']['soap:Body']['GetGrootboekrekeningenResponse']['GetGrootboekrekeningenResult']['Rekeningen']['cGrootboekrekening']",
+								"mapComplexValuesToString": false
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SOAP_eBoekhouden",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_eBoekhouden_GrootboekRekeningen",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "GetKostenplaatsenToSQL",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "GetGrootboekrekeningenToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "XmlSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "POST",
+									"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetKostenplaatsen\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
+									"requestBody": {
+										"value": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soap:Header/>\n   <soap:Body>\n      <eb:GetKostenplaatsen>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter></eb:cFilter>\n      </eb:GetKostenplaatsen>\n   </soap:Body>\n</soap:Envelope>",
+										"type": "Expression"
+									},
+									"requestTimeout": ""
+								},
+								"formatSettings": {
+									"type": "XmlReadSettings",
+									"validationMode": "none",
+									"namespaces": true
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "[['KostenplaatsId']"
+										},
+										"sink": {
+											"name": "KostenPlaatsId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Omschrijving']"
+										},
+										"sink": {
+											"name": "Omschrijving",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['soap:Envelope']['soap:Body']['GetKostenplaatsenResponse']['GetKostenplaatsenResult']['Kostenplaatsen']['cKostenplaats']",
+								"mapComplexValuesToString": false
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SOAP_eBoekhouden",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQL_Load_eBoekhouden_Kostenplaatsen",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "TruncateTables",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "SetSessionId",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzureDB_BrabantMaatjes",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "NonQuery",
+									"text": "TRUNCATE TABLE [Load].[eBoekhouden_Kostenplaatsen];\nTRUNCATE TABLE [Load].[eBoekhouden_Grootboekrekeningen];\nTRUNCATE TABLE [Load].[eBoekhouden_Relaties];"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"SessionId": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/E-Boekhouden"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SOAP_eBoekhouden')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_Relaties')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_GrootboekRekeningen')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_Kostenplaatsen')]",
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SoapEBoekhoudenMutatiesToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetSessionID",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"Host": "soap.e-boekhouden.nl",
+								"Content-Type": " application/soap+xml;charset=UTF-8;action=\"http://www.e-boekhouden.nl/soap/OpenSession\"",
+								"Connection": "Keep-Alive"
+							},
+							"url": "https://soap.e-boekhouden.nl/soap.asmx",
+							"body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n\t<soap:Header/>\n\t<soap:Body>\n\t\t<eb:OpenSession>\n\t\t\t<eb:Username>arjan@brabantmaatjes.nl</eb:Username>\n\t\t\t<eb:SecurityCode1>9ce115f379a03251613590375ab0e62f</eb:SecurityCode1>\n\t\t\t<eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n\t\t</eb:OpenSession>\n\t</soap:Body>\n</soap:Envelope>"
+						}
+					},
+					{
+						"name": "SetSessionId",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "GetSessionID",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "SessionId",
+							"value": {
+								"value": "@json(xml(replace(string(xml(activity('GetSessionID').output.Response)), ':', ''))).soapEnvelope.soapBody.OpenSessionResponse.OpenSessionResult.SessionID",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "GetMutatiesLoop",
+						"type": "Until",
+						"dependsOn": [
+							{
+								"activity": "TruncateTable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@bool(variables('LoopStatus'))",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "GetMutatiesToSQL",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "VariablesForGetMutaties",
+											"dependencyConditions": [
+												"Completed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "XmlSource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "POST",
+												"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetMutaties\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
+												"requestBody": {
+													"value": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <eb:GetMutaties>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter>\n            <eb:DatumVan>@{activity('VariablesForGetMutaties').output.firstRow.DatumVan}</eb:DatumVan>\n            <eb:DatumTm>@{activity('VariablesForGetMutaties').output.firstRow.DatumTm}</eb:DatumTm>\n         </eb:cFilter>\n      </eb:GetMutaties>\n   </soapenv:Body>\n</soapenv:Envelope>\n\n",
+													"type": "Expression"
+												},
+												"requestTimeout": ""
+											},
+											"formatSettings": {
+												"type": "XmlReadSettings",
+												"validationMode": "none",
+												"namespaces": true
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"path": "[['MutatieNr']"
+													},
+													"sink": {
+														"name": "MutatieNr",
+														"type": "Int32"
+													}
+												},
+												{
+													"source": {
+														"path": "[['Soort']"
+													},
+													"sink": {
+														"name": "Soort",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['Datum']"
+													},
+													"sink": {
+														"name": "Datum",
+														"type": "DateTime"
+													}
+												},
+												{
+													"source": {
+														"path": "[['Rekening']"
+													},
+													"sink": {
+														"name": "Rekening",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['RelatieCode']"
+													},
+													"sink": {
+														"name": "RelatieCode",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['Factuurnummer']"
+													},
+													"sink": {
+														"name": "Factuurnummer",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['Boekstuk']"
+													},
+													"sink": {
+														"name": "Boekstuk",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['Omschrijving']"
+													},
+													"sink": {
+														"name": "Omschrijving",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['MutatieRegels']"
+													},
+													"sink": {
+														"name": "MutatieRegels",
+														"type": "String"
+													}
+												}
+											],
+											"collectionReference": "$['soap:Envelope']['soap:Body']['GetMutatiesResponse']['GetMutatiesResult']['Mutaties']['cMutatieList']",
+											"mapComplexValuesToString": true
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "SOAP_eBoekhouden",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SQL_Load_eBoekhouden_Mutaties",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								},
+								{
+									"name": "VariablesForGetMutaties",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderStoredProcedureName": "[[Settings].[VariablesForGetMutaties]",
+											"storedProcedureParameters": {
+												"SessionID": {
+													"type": "String",
+													"value": {
+														"value": "@{variables('SessionId')}",
+														"type": "Expression"
+													}
+												}
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "AzureDB_BrabantMaatjes",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									}
+								},
+								{
+									"name": "EndLoop",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "GetMutatiesToSQL",
+											"dependencyConditions": [
+												"Completed"
+											]
+										}
+									],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "LoopStatus",
+										"value": {
+											"value": "@{bool(activity('VariablesForGetMutaties').output.firstRow.Result)}",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"timeout": "0.12:00:00"
+						}
+					},
+					{
+						"name": "TruncateTable",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "SetSessionId",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "AzureDB_BrabantMaatjes",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "TRUNCATE TABLE [Load].[eBoekhouden_Mutaties]"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"SessionId": {
+						"type": "String"
+					},
+					"LoopStatus": {
+						"type": "String",
+						"defaultValue": "false"
+					}
+				},
+				"folder": {
+					"name": "Proeftuin/E-Boekhouden"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]",
+				"[concat(variables('factoryId'), '/datasets/SOAP_eBoekhouden')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_Mutaties')]",
+				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDB_BrabantMaatjes')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_FooEvents_Checkin')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestApi_FooEvents_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"modified_after": {
+						"type": "string",
+						"defaultValue": "2025-01-01T00:00:00Z"
+					}
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('checkin?modified_after=',dataset().modified_after)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RestApi_FooEvents_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_Mollie')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestAPI_Mollie",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"RelativeUrl": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "MolliePayments"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@dataset().RelativeUrl",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RestAPI_Mollie')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_WooCommerce_Orders')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestAPI_WooCommerce_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"modified_after": {
+						"type": "string",
+						"defaultValue": "2024-01-01T00:00:00Z"
+					}
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('orders?modified_after=',dataset().modified_after)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RestAPI_WooCommerce_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_WooCommerce_Products')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestAPI_WooCommerce_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"modified_after": {
+						"type": "string",
+						"defaultValue": "2025-01-01T00:00:00Z"
+					}
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat('products?modified_after=',dataset().modified_after)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RestAPI_WooCommerce_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SOAP_eBoekhouden')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "eBoekhouden_SOAP",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "E-Boekhouden"
+				},
+				"annotations": [],
+				"type": "Xml",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": "/soap.asmx"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/eBoekhouden_SOAP')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Activiteiten')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Sharepoint"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "varchar"
+					},
+					{
+						"name": "Title",
+						"type": "varchar"
+					},
+					{
+						"name": "Datum",
+						"type": "varchar"
+					},
+					{
+						"name": "SKU",
+						"type": "varchar"
+					},
+					{
+						"name": "foo_AantalTickets",
+						"type": "varchar"
+					},
+					{
+						"name": "foo_LaatstToegevoegd",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Sharepoint_Activiteiten"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Activiteiten2025')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Sharepoint"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "varchar"
+					},
+					{
+						"name": "Title",
+						"type": "varchar"
+					},
+					{
+						"name": "Datum",
+						"type": "varchar"
+					},
+					{
+						"name": "SKU",
+						"type": "varchar"
+					},
+					{
+						"name": "foo_AantalTickets",
+						"type": "varchar"
+					},
+					{
+						"name": "foo_LaatstToegevoegd",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Sharepoint_Activiteiten2025"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Deelnemers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Sharepoint"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Naam",
+						"type": "varchar"
+					},
+					{
+						"name": "Email",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Aanmelddatum",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Activiteit_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "FooEvents_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Aanwezig",
+						"type": "bit"
+					},
+					{
+						"name": "DatumLaatstGewijzigd",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Sharepoint_Deelnemers"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_FooEvents_Checkin')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Bestelling_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Product_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EventStatus",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "FooEvents_Checkin"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Payments')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "MolliePayments"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "createdAt",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "order_id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amountRefunded",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amountRemaining",
+						"type": "nvarchar"
+					},
+					{
+						"name": "consumerName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "consumerAccount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "settlementId",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Mollie_Payments"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Refunds')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "MolliePayments"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "createdAt",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "paymentId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "settlementAmount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "settlementId",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Mollie_Refunds"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Settlements')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "MolliePayments"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "createdAt",
+						"type": "nvarchar"
+					},
+					{
+						"name": "amount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "paymentId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "settlementAmount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "settlementId",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "Mollie_Settlements"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_WooCommerce_Orders')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "date_created",
+						"type": "nvarchar"
+					},
+					{
+						"name": "date_modified",
+						"type": "nvarchar"
+					},
+					{
+						"name": "discount_total",
+						"type": "nvarchar"
+					},
+					{
+						"name": "discount_tax",
+						"type": "nvarchar"
+					},
+					{
+						"name": "total",
+						"type": "nvarchar"
+					},
+					{
+						"name": "total_tax",
+						"type": "nvarchar"
+					},
+					{
+						"name": "customer_id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "transaction_id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "date_paid",
+						"type": "nvarchar"
+					},
+					{
+						"name": "number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "billing",
+						"type": "nvarchar"
+					},
+					{
+						"name": "line_items",
+						"type": "nvarchar"
+					},
+					{
+						"name": "coupon_lines",
+						"type": "nvarchar"
+					},
+					{
+						"name": "meta_data",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "WooCommerce_Orders"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_WooCommerce_Products')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "nvarchar"
+					},
+					{
+						"name": "sku",
+						"type": "nvarchar"
+					},
+					{
+						"name": "name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "slug",
+						"type": "nvarchar"
+					},
+					{
+						"name": "status",
+						"type": "nvarchar"
+					},
+					{
+						"name": "price",
+						"type": "nvarchar"
+					},
+					{
+						"name": "stock_quantity",
+						"type": "nvarchar"
+					},
+					{
+						"name": "low_stock_amount",
+						"type": "nvarchar"
+					},
+					{
+						"name": "permalink",
+						"type": "nvarchar"
+					},
+					{
+						"name": "categories",
+						"type": "nvarchar"
+					},
+					{
+						"name": "meta_data",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "WooCommerce_Products"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_GrootboekRekeningen')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "E-Boekhouden"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Code",
+						"type": "varchar"
+					},
+					{
+						"name": "Omschrijving",
+						"type": "varchar"
+					},
+					{
+						"name": "Categorie",
+						"type": "varchar"
+					},
+					{
+						"name": "Groep",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "eBoekhouden_Grootboekrekeningen"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_Kostenplaatsen')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "E-Boekhouden"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "KostenPlaatsId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Omschrijving",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "eBoekhouden_Kostenplaatsen"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_Mutaties')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "E-Boekhouden"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "MutatieNr",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Soort",
+						"type": "varchar"
+					},
+					{
+						"name": "Datum",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Rekening",
+						"type": "varchar"
+					},
+					{
+						"name": "RelatieCode",
+						"type": "varchar"
+					},
+					{
+						"name": "Factuurnummer",
+						"type": "varchar"
+					},
+					{
+						"name": "Boekstuk",
+						"type": "varchar"
+					},
+					{
+						"name": "Omschrijving",
+						"type": "varchar"
+					},
+					{
+						"name": "MutatieRegels",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "eBoekhouden_Mutaties"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_Relaties')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "E-Boekhouden"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "AddDatum",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "Code",
+						"type": "varchar"
+					},
+					{
+						"name": "Bedrijf",
+						"type": "varchar"
+					},
+					{
+						"name": "ContactPersoon",
+						"type": "varchar"
+					},
+					{
+						"name": "Plaats",
+						"type": "varchar"
+					},
+					{
+						"name": "Email",
+						"type": "varchar"
+					},
+					{
+						"name": "BTWNummer",
+						"type": "varchar"
+					},
+					{
+						"name": "KvkNummer",
+						"type": "varchar"
+					},
+					{
+						"name": "IBAN",
+						"type": "varchar"
+					},
+					{
+						"name": "BP",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Load",
+					"table": "eBoekhouden_Relaties"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sharepoint_API_Activiteiten2026')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RestApi_Sharepoint",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Sharepoint"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": "sites/team/_api/web/lists/GetByTitle('Activiteiten 2026')/items?$top=1000"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RestApi_Sharepoint')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDB_BrabantMaatjes')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('AzureDB_BrabantMaatjes_properties_typeProperties_server')]",
+					"database": "[parameters('AzureDB_BrabantMaatjes_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('AzureDB_BrabantMaatjes_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDB_BrabantMaatjes_password')]"
+					},
+					"connectTimeout": 300
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('AzureSqlDatabase1_properties_typeProperties_server')]",
+					"database": "[parameters('AzureSqlDatabase1_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('AzureSqlDatabase1_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('AzureSqlDatabase1_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FabricDataBase')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"server": "[parameters('FabricDataBase_properties_typeProperties_server')]",
+					"database": "[parameters('FabricDataBase_properties_typeProperties_database')]",
+					"encrypt": "strict",
+					"trustServerCertificate": true,
+					"authenticationType": "Windows",
+					"userName": "[parameters('FabricDataBase_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('FabricDataBase_password')]"
+					},
+					"alwaysEncryptedSettings": {
+						"alwaysEncryptedAkvAuthType": "ManagedIdentity"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_Mollie')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestAPI_Mollie_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_WC_BrabantMaatjes_Orders')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('RestAPI_WC_BrabantMaatjes_Orders_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_WooCommerce_BrabantMaatjes')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestAPI_WooCommerce_BrabantMaatjes_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('RestAPI_WooCommerce_BrabantMaatjes_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('RestAPI_WooCommerce_BrabantMaatjes_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestApi_FooEvents_BrabantMaatjes')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestApi_FooEvents_BrabantMaatjes_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RestApi_Sharepoint')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestApi_Sharepoint_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/eBoekhouden_SOAP')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('eBoekhouden_SOAP_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DailyAtMidnight')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "DailyUpdate",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2025-01-30T01:00:00",
+						"endTime": "2027-01-01T23:00:00",
+						"timeZone": "W. Europe Standard Time",
+						"schedule": {
+							"minutes": [
+								0
+							],
+							"hours": [
+								2
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/DailyUpdate')]"
+			]
+		}
+	]
+}
