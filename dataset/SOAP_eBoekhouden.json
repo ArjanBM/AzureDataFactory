@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "E-Boekhouden"
+			"name": "eBoekhouden"
 		},
 		"annotations": [],
 		"type": "Xml",
