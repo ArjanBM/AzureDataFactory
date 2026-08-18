@@ -220,7 +220,7 @@
 					{
 						"activity": "GetRelatiesToSQL",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					}
 				],
@@ -330,7 +330,7 @@
 					{
 						"activity": "GetGrootboekrekeningenToSQL",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					}
 				],
