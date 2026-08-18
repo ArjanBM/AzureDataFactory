@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "E-Boekhouden"
+			"name": "eBoekhouden"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
@@ -34,8 +34,8 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "Load",
-			"table": "eBoekhouden_Grootboekrekeningen"
+			"schema": "Stage",
+			"table": "eBoekhouden_Kostenplaatsen"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
