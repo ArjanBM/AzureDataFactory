@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "E-Boekhouden"
+			"name": "eBoekhouden"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
@@ -60,7 +60,7 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "Load",
+			"schema": "Stage",
 			"table": "eBoekhouden_Relaties"
 		}
 	},
