@@ -277,7 +277,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_GrootboekRekeningen')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_eBoekhouden_GrootboekRekeningen')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -321,7 +321,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_Kostenplaatsen')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_eBoekhouden_Kostenplaatsen')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -353,7 +353,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_Mutaties')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_eBoekhouden_Mutaties')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -415,7 +415,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_eBoekhouden_Relaties')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_eBoekhouden_Relaties')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2530,7 +2530,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_eBoekhouden_Relaties",
+								"referenceName": "SQL_Stage_eBoekhouden_Relaties",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -2642,7 +2642,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_eBoekhouden_GrootboekRekeningen",
+								"referenceName": "SQL_Stage_eBoekhouden_GrootboekRekeningen",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -2727,7 +2727,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_eBoekhouden_Kostenplaatsen",
+								"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -2782,9 +2782,9 @@
 				"lastPublishTime": "2026-08-15T18:39:36Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_Relaties')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_GrootboekRekeningen')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_Kostenplaatsen')]"
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_eBoekhouden_Relaties')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_eBoekhouden_GrootboekRekeningen')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_eBoekhouden_Kostenplaatsen')]"
 			]
 		},
 		{
@@ -3000,7 +3000,7 @@
 									],
 									"outputs": [
 										{
-											"referenceName": "SQL_Load_eBoekhouden_Mutaties",
+											"referenceName": "SQL_Stage_eBoekhouden_Mutaties",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -3152,7 +3152,7 @@
 				"lastPublishTime": "2026-08-15T18:39:36Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_eBoekhouden_Mutaties')]"
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_eBoekhouden_Mutaties')]"
 			]
 		}
 	]
