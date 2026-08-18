@@ -286,7 +286,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "E-Boekhouden"
+					"name": "eBoekhouden"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -314,8 +314,8 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
-					"table": "eBoekhouden_Grootboekrekeningen"
+					"schema": "Stage",
+					"table": "eBoekhouden_Kostenplaatsen"
 				}
 			},
 			"dependsOn": []
@@ -330,7 +330,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "E-Boekhouden"
+					"name": "eBoekhouden"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -346,7 +346,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "eBoekhouden_Kostenplaatsen"
 				}
 			},
@@ -362,7 +362,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "E-Boekhouden"
+					"name": "eBoekhouden"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -424,7 +424,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "E-Boekhouden"
+					"name": "eBoekhouden"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -478,7 +478,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "eBoekhouden_Relaties"
 				}
 			},
@@ -3146,7 +3146,7 @@
 					}
 				},
 				"folder": {
-					"name": "Proeftuin/E-Boekhouden"
+					"name": "Extract/eBoekhouden"
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
