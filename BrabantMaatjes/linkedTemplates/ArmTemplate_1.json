@@ -408,7 +408,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "eBoekhouden_Mutaties"
 				}
 			},
