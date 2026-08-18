@@ -208,7 +208,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "SQL_Load_eBoekhouden_Mutaties",
+									"referenceName": "SQL_Stage_eBoekhouden_Mutaties",
 									"type": "DatasetReference"
 								}
 							]

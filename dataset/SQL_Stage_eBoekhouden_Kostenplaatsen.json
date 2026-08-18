@@ -1,5 +1,5 @@
 {
-	"name": "SQL_Load_eBoekhouden_Kostenplaatsen",
+	"name": "SQL_Stage_eBoekhouden_Kostenplaatsen",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDB_BrabantMaatjes",

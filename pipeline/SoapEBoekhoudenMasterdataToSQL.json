@@ -208,7 +208,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Load_eBoekhouden_Relaties",
+						"referenceName": "SQL_Stage_eBoekhouden_Relaties",
 						"type": "DatasetReference"
 					}
 				]
@@ -318,7 +318,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Load_eBoekhouden_GrootboekRekeningen",
+						"referenceName": "SQL_Stage_eBoekhouden_GrootboekRekeningen",
 						"type": "DatasetReference"
 					}
 				]
@@ -401,7 +401,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Load_eBoekhouden_Kostenplaatsen",
+						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
 						"type": "DatasetReference"
 					}
 				]

@@ -1,5 +1,5 @@
 {
-	"name": "SQL_Load_eBoekhouden_Relaties",
+	"name": "SQL_Stage_eBoekhouden_Relaties",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDB_BrabantMaatjes",
