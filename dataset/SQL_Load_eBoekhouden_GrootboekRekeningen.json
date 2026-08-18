@@ -35,7 +35,7 @@
 		],
 		"typeProperties": {
 			"schema": "Stage",
-			"table": "eBoekhouden_Kostenplaatsen"
+			"table": "eBoekhouden_Grootboekrekeningen"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
