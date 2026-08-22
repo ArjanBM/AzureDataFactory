@@ -77,7 +77,7 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "Load",
+			"schema": "Stage",
 			"table": "WooCommerce_Orders"
 		}
 	},
