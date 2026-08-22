@@ -223,7 +223,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([Datum_Bestelling]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_OrderOverview]",
+						"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([Datum_Bestelling]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Core].[WooCommerce_Orders]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
