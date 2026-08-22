@@ -12,18 +12,12 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "Id",
+				"name": "Ticket_Id",
 				"type": "bigint",
 				"precision": 19
 			},
 			{
-				"name": "Modified",
-				"type": "datetime",
-				"precision": 23,
-				"scale": 3
-			},
-			{
-				"name": "Bestelling_Id",
+				"name": "Order_Id",
 				"type": "int",
 				"precision": 10
 			},
@@ -33,12 +27,32 @@
 				"precision": 10
 			},
 			{
-				"name": "EventStatus",
+				"name": "Ticket_Number",
 				"type": "nvarchar"
+			},
+			{
+				"name": "TicketStatus",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Ticket_Modified",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EventLogStatus",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EventLogStatus_Modified",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
 			}
 		],
 		"typeProperties": {
-			"schema": "Load",
+			"schema": "Stage",
 			"table": "FooEvents_Checkin"
 		}
 	},
