@@ -1,5 +1,5 @@
 {
-	"name": "SQL_Load_WooCommerce_Orders",
+	"name": "SQL_Stage_WooCommerce_Orders",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDB_BrabantMaatjes",

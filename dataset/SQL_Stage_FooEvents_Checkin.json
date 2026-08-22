@@ -1,5 +1,5 @@
 {
-	"name": "SQL_Load_FooEvents_Checkin",
+	"name": "SQL_Stage_FooEvents_Checkin",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDB_BrabantMaatjes",

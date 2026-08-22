@@ -203,7 +203,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Load_WooCommerce_Orders",
+						"referenceName": "SQL_Stage_WooCommerce_Orders",
 						"type": "DatasetReference"
 					}
 				]

@@ -133,7 +133,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Load_FooEvents_Checkin",
+						"referenceName": "SQL_Stage_FooEvents_Checkin",
 						"type": "DatasetReference"
 					}
 				]
