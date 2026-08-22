@@ -1307,7 +1307,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Orders]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[WooCommerce_Orders]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -1498,7 +1498,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([Datum_Bestelling]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_OrderOverview]",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([Datum_Bestelling]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Core].[WooCommerce_Orders]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -1595,7 +1595,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Products]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[WooCommerce_Products]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -1760,7 +1760,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_ProductOverview]\nWHERE [datum] > '2025/12/31'",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Core].[WooCommerce_Products]\nWHERE [datum] > '2025/12/31'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -3880,7 +3880,8 @@
 				"schema": [
 					{
 						"name": "Id",
-						"type": "varchar"
+						"type": "int",
+						"precision": 10
 					},
 					{
 						"name": "Title",
@@ -3888,73 +3889,49 @@
 					},
 					{
 						"name": "Datum",
-						"type": "varchar"
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					},
 					{
 						"name": "SKU",
 						"type": "varchar"
 					},
 					{
-						"name": "foo_AantalTickets",
+						"name": "Aanmeldingen",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DatumLaatsteAanmelding",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "KernRegio",
 						"type": "varchar"
 					},
 					{
-						"name": "foo_LaatstToegevoegd",
+						"name": "Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Opgezet",
+						"type": "varchar"
+					},
+					{
+						"name": "Categorie",
+						"type": "varchar"
+					},
+					{
+						"name": "Source",
 						"type": "varchar"
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "Sharepoint_Activiteiten"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Activiteiten2025')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDB_BrabantMaatjes",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Sharepoint"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Id",
-						"type": "varchar"
-					},
-					{
-						"name": "Title",
-						"type": "varchar"
-					},
-					{
-						"name": "Datum",
-						"type": "varchar"
-					},
-					{
-						"name": "SKU",
-						"type": "varchar"
-					},
-					{
-						"name": "foo_AantalTickets",
-						"type": "varchar"
-					},
-					{
-						"name": "foo_LaatstToegevoegd",
-						"type": "varchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "Load",
-					"table": "Sharepoint_Activiteiten2025"
 				}
 			},
 			"dependsOn": [
@@ -4018,61 +3995,17 @@
 						"type": "datetime",
 						"precision": 23,
 						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "Load",
-					"table": "Sharepoint_Deelnemers"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Stage_FooEvents_Checkin')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDB_BrabantMaatjes",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "WooCommerce"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Id",
-						"type": "bigint",
-						"precision": 19
 					},
 					{
-						"name": "Modified",
+						"name": "Gewijzigd",
 						"type": "datetime",
 						"precision": 23,
 						"scale": 3
-					},
-					{
-						"name": "Bestelling_Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Product_Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "EventStatus",
-						"type": "nvarchar"
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
-					"table": "FooEvents_Checkin"
+					"schema": "Stage",
+					"table": "Sharepoint_Deelnemers"
 				}
 			},
 			"dependsOn": [
@@ -4263,6 +4196,70 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_FooEvents_Checkin')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Ticket_Id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Order_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Product_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Ticket_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TicketStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Ticket_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "EventLogStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EventLogStatus_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Stage",
+					"table": "FooEvents_Checkin"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SQL_Stage_WooCommerce_Orders')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -4343,7 +4340,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "WooCommerce_Orders"
 				}
 			},
@@ -4403,7 +4400,15 @@
 						"type": "nvarchar"
 					},
 					{
+						"name": "date_modified",
+						"type": "nvarchar"
+					},
+					{
 						"name": "categories",
+						"type": "nvarchar"
+					},
+					{
+						"name": "brands",
 						"type": "nvarchar"
 					},
 					{
@@ -4412,7 +4417,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "WooCommerce_Products"
 				}
 			},

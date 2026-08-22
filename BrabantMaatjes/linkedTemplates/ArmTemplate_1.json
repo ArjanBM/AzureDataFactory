@@ -13,7 +13,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Refunds')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_FooEvents_Checkin')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -22,102 +22,54 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "MolliePayments"
+					"name": "WooCommerce"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "id",
+						"name": "Ticket_Id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Order_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Product_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Ticket_Number",
 						"type": "nvarchar"
 					},
 					{
-						"name": "createdAt",
+						"name": "TicketStatus",
 						"type": "nvarchar"
 					},
 					{
-						"name": "amount",
+						"name": "Ticket_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "EventLogStatus",
 						"type": "nvarchar"
 					},
 					{
-						"name": "description",
-						"type": "nvarchar"
-					},
-					{
-						"name": "paymentId",
-						"type": "nvarchar"
-					},
-					{
-						"name": "status",
-						"type": "nvarchar"
-					},
-					{
-						"name": "settlementAmount",
-						"type": "nvarchar"
-					},
-					{
-						"name": "settlementId",
-						"type": "nvarchar"
+						"name": "EventLogStatus_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
-					"table": "Mollie_Refunds"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Settlements')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDB_BrabantMaatjes",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "MolliePayments"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "id",
-						"type": "nvarchar"
-					},
-					{
-						"name": "createdAt",
-						"type": "nvarchar"
-					},
-					{
-						"name": "amount",
-						"type": "nvarchar"
-					},
-					{
-						"name": "description",
-						"type": "nvarchar"
-					},
-					{
-						"name": "paymentId",
-						"type": "nvarchar"
-					},
-					{
-						"name": "status",
-						"type": "nvarchar"
-					},
-					{
-						"name": "settlementAmount",
-						"type": "nvarchar"
-					},
-					{
-						"name": "settlementId",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "Load",
-					"table": "Mollie_Settlements"
+					"schema": "Stage",
+					"table": "FooEvents_Checkin"
 				}
 			},
 			"dependsOn": []
@@ -203,7 +155,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "WooCommerce_Orders"
 				}
 			},
@@ -261,7 +213,15 @@
 						"type": "nvarchar"
 					},
 					{
+						"name": "date_modified",
+						"type": "nvarchar"
+					},
+					{
 						"name": "categories",
+						"type": "nvarchar"
+					},
+					{
+						"name": "brands",
 						"type": "nvarchar"
 					},
 					{
@@ -270,7 +230,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "WooCommerce_Products"
 				}
 			},
@@ -689,7 +649,9 @@
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_FooEvents_Checkin')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ApiMollie_PaymentsToSQL')]",
@@ -1094,9 +1056,7 @@
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_Mollie_Refunds')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ApiMollie_SettlementsToSQL')]",
@@ -1285,9 +1245,7 @@
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_Mollie_Settlements')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ApiWooCommerceOrdersToSQL')]",
@@ -1326,7 +1284,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Orders]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[WooCommerce_Orders]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -1517,7 +1475,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([Datum_Bestelling]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_OrderOverview]",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([Datum_Bestelling]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Core].[WooCommerce_Orders]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -1611,7 +1569,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Products]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[WooCommerce_Products]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -1776,7 +1734,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_ProductOverview]\nWHERE [datum] > '2025/12/31'",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Core].[WooCommerce_Products]\nWHERE [datum] > '2025/12/31'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -3153,6 +3111,117 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SQL_Stage_eBoekhouden_Mutaties')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ApiMollie')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RefreshAutoToken",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_RefreshAuthToken",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "PaymentsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "RefreshAutoToken",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_PaymentsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "RefundsToSql",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "PaymentsToSQL",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_RefundsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "SettlementsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "RefundsToSql",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_SettlementsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Proeftuin/MolliePayments"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_PaymentsToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_RefundsToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_SettlementsToSQL')]"
 			]
 		}
 	]
