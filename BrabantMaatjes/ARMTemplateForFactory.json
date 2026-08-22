@@ -197,7 +197,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_FooEvents_Checkin",
+								"referenceName": "SQL_Stage_FooEvents_Checkin",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -246,7 +246,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RestAPI_FooEvents_Checkin')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_FooEvents_Checkin')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_FooEvents_Checkin')]",
 				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]"
 			]
 		},
@@ -1477,7 +1477,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_WooCommerce_Orders",
+								"referenceName": "SQL_Stage_WooCommerce_Orders",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1553,7 +1553,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RestAPI_WooCommerce_Orders')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_WooCommerce_Orders')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_WooCommerce_Orders')]",
 				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
 			]
@@ -1738,7 +1738,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_WooCommerce_Products",
+								"referenceName": "SQL_Stage_WooCommerce_Products",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1815,7 +1815,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RestAPI_WooCommerce_Products')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_WooCommerce_Products')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_WooCommerce_Products')]",
 				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]",
 				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
 			]
@@ -4030,7 +4030,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_FooEvents_Checkin')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_FooEvents_Checkin')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -4263,7 +4263,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_WooCommerce_Orders')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_WooCommerce_Orders')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -4352,7 +4352,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_WooCommerce_Products')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_WooCommerce_Products')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
