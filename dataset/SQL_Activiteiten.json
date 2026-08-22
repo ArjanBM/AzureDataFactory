@@ -13,7 +13,8 @@
 		"schema": [
 			{
 				"name": "Id",
-				"type": "varchar"
+				"type": "int",
+				"precision": 10
 			},
 			{
 				"name": "Title",
@@ -21,23 +22,48 @@
 			},
 			{
 				"name": "Datum",
-				"type": "varchar"
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
 			},
 			{
 				"name": "SKU",
 				"type": "varchar"
 			},
 			{
-				"name": "foo_AantalTickets",
+				"name": "Aanmeldingen",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DatumLaatsteAanmelding",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "KernRegio",
 				"type": "varchar"
 			},
 			{
-				"name": "foo_LaatstToegevoegd",
+				"name": "Status",
+				"type": "varchar"
+			},
+			{
+				"name": "Opgezet",
+				"type": "varchar"
+			},
+			{
+				"name": "Categorie",
+				"type": "varchar"
+			},
+			{
+				"name": "Source",
 				"type": "varchar"
 			}
 		],
 		"typeProperties": {
-			"schema": "Load",
+			"schema": "Stage",
 			"table": "Sharepoint_Activiteiten"
 		}
 	},
