@@ -33,7 +33,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [Load].[WooCommerce_Orders]",
+						"preCopyScript": "TRUNCATE TABLE [Stage].[WooCommerce_Orders]",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
