@@ -48,7 +48,15 @@
 				"type": "nvarchar"
 			},
 			{
+				"name": "date_modified",
+				"type": "nvarchar"
+			},
+			{
 				"name": "categories",
+				"type": "nvarchar"
+			},
+			{
+				"name": "brands",
 				"type": "nvarchar"
 			},
 			{
@@ -57,7 +65,7 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "Load",
+			"schema": "Stage",
 			"table": "WooCommerce_Products"
 		}
 	},
