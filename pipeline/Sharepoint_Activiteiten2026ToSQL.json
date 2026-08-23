@@ -48,7 +48,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [Load].[Sharepoint_Activiteiten]",
+						"preCopyScript": "TRUNCATE TABLE [Stage].[Sharepoint_Activiteiten]",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
