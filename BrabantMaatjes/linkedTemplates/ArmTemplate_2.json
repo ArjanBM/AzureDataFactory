@@ -373,8 +373,6 @@
 					{
 						"name": "SQL_Model_ToSharepoint",
 						"type": "ExecutePipeline",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "WooCommerce",
