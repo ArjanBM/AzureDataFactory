@@ -2066,7 +2066,7 @@
 								"value": "@activity('Get Sharepoint List Items').output.value",
 								"type": "Expression"
 							},
-							"isSequential": false,
+							"isSequential": true,
 							"activities": [
 								{
 									"name": "Sharepoint Update List Item",
@@ -2165,6 +2165,7 @@
 						}
 					}
 				],
+				"concurrency": 1,
 				"policy": {
 					"elapsedTimeMetric": {}
 				},
@@ -2323,7 +2324,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[Sharepoint_Activiteiten]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[Sharepoint_Activiteiten]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -4073,7 +4074,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "Mollie_Payments"
 				}
 			},
@@ -4130,7 +4131,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "Mollie_Refunds"
 				}
 			},
@@ -4187,7 +4188,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "Mollie_Settlements"
 				}
 			},

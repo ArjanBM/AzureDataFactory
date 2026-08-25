@@ -992,7 +992,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "Mollie_Payments"
 				}
 			},
@@ -1049,7 +1049,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "Mollie_Refunds"
 				}
 			},
@@ -1106,7 +1106,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "Load",
+					"schema": "Stage",
 					"table": "Mollie_Settlements"
 				}
 			},
