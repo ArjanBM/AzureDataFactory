@@ -45,7 +45,7 @@
 			}
 		],
 		"typeProperties": {
-			"schema": "Load",
+			"schema": "Stage",
 			"table": "Mollie_Settlements"
 		}
 	},
