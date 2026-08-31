@@ -133,12 +133,6 @@
 							"RelativeUrl": "v2/refunds"
 						}
 					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SQL_Load_Mollie_Refunds",
-						"type": "DatasetReference"
-					}
 				]
 			},
 			{

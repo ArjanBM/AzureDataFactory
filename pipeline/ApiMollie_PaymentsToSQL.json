@@ -73,7 +73,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Settlements').output",
+						"value": "@activity('Get Settlements').output.value",
 						"type": "Expression"
 					},
 					"isSequential": false,
