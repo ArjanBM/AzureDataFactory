@@ -230,7 +230,10 @@
 									"referenceName": "RestAPI_Mollie",
 									"type": "DatasetReference",
 									"parameters": {
-										"RelativeUrl": "v2/settlements/stl_ybhw2f/payments"
+										"RelativeUrl": {
+											"value": "v2/settlements/@{item().Id}/payments",
+											"type": "Expression"
+										}
 									}
 								}
 							],
