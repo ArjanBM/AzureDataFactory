@@ -696,7 +696,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Payments]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[Mollie_Payments]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -803,10 +803,18 @@
 											"name": "status",
 											"type": "String"
 										}
+									},
+									{
+										"source": {
+											"path": "[['lines']"
+										},
+										"sink": {
+											"name": "lines"
+										}
 									}
 								],
 								"collectionReference": "$['_embedded']['payments']",
-								"mapComplexValuesToString": false
+								"mapComplexValuesToString": true
 							}
 						},
 						"inputs": [
@@ -814,7 +822,7 @@
 								"referenceName": "RestAPI_Mollie",
 								"type": "DatasetReference",
 								"parameters": {
-									"RelativeUrl": "v2/payments"
+									"RelativeUrl": "v2/settlements/stl_ybhw2f/payments"
 								}
 							}
 						],
