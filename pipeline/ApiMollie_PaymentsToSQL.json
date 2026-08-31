@@ -72,6 +72,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Settlements').output",
+						"type": "Expression"
+					},
 					"isSequential": false,
 					"activities": [
 						{
