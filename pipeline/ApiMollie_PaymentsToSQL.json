@@ -3,173 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Payments To SQL",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.060",
-						"requestMethod": "GET",
-						"additionalHeaders": {
-							"Authorization": {
-								"value": "Bearer @{activity('Get Mollie Access Token').output.value}",
-								"type": "Expression"
-							}
-						},
-						"paginationRules": {
-							"AbsoluteUrl": "$._links.next.href"
-						}
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [Stage].[Mollie_Payments]",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false,
-						"disableMetricsCollection": false
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "['id']"
-								},
-								"sink": {
-									"name": "id",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['createdAt']"
-								},
-								"sink": {
-									"name": "createdAt",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['amount']['value']"
-								},
-								"sink": {
-									"name": "amount",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['description']"
-								},
-								"sink": {
-									"name": "description",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['metadata']['order_id']"
-								},
-								"sink": {
-									"name": "order_id",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['amountRefunded']['value']"
-								},
-								"sink": {
-									"name": "amountRefunded",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['amountRemaining']['value']"
-								},
-								"sink": {
-									"name": "amountRemaining",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['details']['consumerName']"
-								},
-								"sink": {
-									"name": "consumerName",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['details']['consumerAccount']"
-								},
-								"sink": {
-									"name": "consumerAccount",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['settlementId']"
-								},
-								"sink": {
-									"name": "settlementId",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['status']"
-								},
-								"sink": {
-									"name": "status",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['lines']"
-								},
-								"sink": {
-									"name": "lines"
-								}
-							}
-						],
-						"collectionReference": "$['_embedded']['payments']",
-						"mapComplexValuesToString": true
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "RestAPI_Mollie",
-						"type": "DatasetReference",
-						"parameters": {
-							"RelativeUrl": "v2/settlements/stl_ybhw2f/payments"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SQL_Load_Mollie_Payments",
-						"type": "DatasetReference"
-					}
-				]
-			},
-			{
 				"name": "Get Mollie Access Token",
 				"type": "WebActivity",
 				"dependsOn": [],
@@ -224,6 +57,191 @@
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Payments for each Settlement",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Settlements",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Payments To SQL",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.060",
+									"requestMethod": "GET",
+									"additionalHeaders": {
+										"Authorization": {
+											"value": "Bearer @{activity('Get Mollie Access Token').output.value}",
+											"type": "Expression"
+										}
+									},
+									"paginationRules": {
+										"AbsoluteUrl": "$._links.next.href"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE [Stage].[Mollie_Payments]",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"path": "['id']"
+											},
+											"sink": {
+												"name": "id",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['createdAt']"
+											},
+											"sink": {
+												"name": "createdAt",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['amount']['value']"
+											},
+											"sink": {
+												"name": "amount",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['description']"
+											},
+											"sink": {
+												"name": "description",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['metadata']['order_id']"
+											},
+											"sink": {
+												"name": "order_id",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['amountRefunded']['value']"
+											},
+											"sink": {
+												"name": "amountRefunded",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['amountRemaining']['value']"
+											},
+											"sink": {
+												"name": "amountRemaining",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['details']['consumerName']"
+											},
+											"sink": {
+												"name": "consumerName",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['details']['consumerAccount']"
+											},
+											"sink": {
+												"name": "consumerAccount",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['settlementId']"
+											},
+											"sink": {
+												"name": "settlementId",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['status']"
+											},
+											"sink": {
+												"name": "status",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['lines']"
+											},
+											"sink": {
+												"name": "lines"
+											}
+										}
+									],
+									"collectionReference": "$['_embedded']['payments']",
+									"mapComplexValuesToString": true
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "RestAPI_Mollie",
+									"type": "DatasetReference",
+									"parameters": {
+										"RelativeUrl": "v2/settlements/stl_ybhw2f/payments"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SQL_Load_Mollie_Payments",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
 				}
 			}
 		],
