@@ -7,7 +7,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Get Mollie Access Token",
+						"activity": "Mollie_Get_Settlements_ForPaymentExtract",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -198,6 +198,39 @@
 						"type": "MSI",
 						"resource": "https://vault.azure.net"
 					}
+				}
+			},
+			{
+				"name": "Mollie_Get_Settlements_ForPaymentExtract",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Get Mollie Access Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "NonQuery",
+							"text": "EXEC [Stage].[SP_Mollie_Get_Settlements_ForPaymentExtract]"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
 				}
 			}
 		],
