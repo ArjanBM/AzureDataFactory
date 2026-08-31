@@ -194,9 +194,16 @@
 				}
 			},
 			{
-				"name": "Stored procedure1",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [],
+				"name": "Get Settlements",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "Get Mollie Access Token",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -206,11 +213,17 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[Stage].[SP_Mollie_Get_Settlements_ForPaymentExtract]"
-				},
-				"linkedServiceName": {
-					"referenceName": "AzureDB_BrabantMaatjes",
-					"type": "LinkedServiceReference"
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[Stage].[SP_Mollie_Get_Settlements_ForPaymentExtract]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureDB_BrabantMaatjes",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
