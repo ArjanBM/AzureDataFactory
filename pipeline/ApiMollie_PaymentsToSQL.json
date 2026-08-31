@@ -39,7 +39,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Payments]",
+						"preCopyScript": "TRUNCATE TABLE [Stage].[Mollie_Payments]",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
@@ -157,7 +157,7 @@
 						"referenceName": "RestAPI_Mollie",
 						"type": "DatasetReference",
 						"parameters": {
-							"RelativeUrl": "v2/payments"
+							"RelativeUrl": "v2/settlements/stl_ybhw2f/payments"
 						}
 					}
 				],
