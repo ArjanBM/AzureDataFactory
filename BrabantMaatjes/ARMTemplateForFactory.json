@@ -571,7 +571,7 @@
 					}
 				},
 				"folder": {
-					"name": "Proeftuin/MolliePayments"
+					"name": "Proeftuin/Mollie"
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
@@ -792,7 +792,7 @@
 					}
 				},
 				"folder": {
-					"name": "Proeftuin/MolliePayments"
+					"name": "Proeftuin/Mollie"
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
@@ -981,7 +981,7 @@
 					}
 				},
 				"folder": {
-					"name": "Proeftuin/MolliePayments"
+					"name": "Proeftuin/Mollie"
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
@@ -1173,7 +1173,7 @@
 					}
 				},
 				"folder": {
-					"name": "Proeftuin/MolliePayments"
+					"name": "Proeftuin/Mollie"
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
@@ -3759,7 +3759,7 @@
 					}
 				},
 				"folder": {
-					"name": "MolliePayments"
+					"name": "Mollie"
 				},
 				"annotations": [],
 				"type": "RestResource",
@@ -4092,7 +4092,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "MolliePayments"
+					"name": "Mollie"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
