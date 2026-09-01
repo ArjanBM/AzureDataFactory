@@ -1,0 +1,15 @@
+{
+	"name": "API_eBoekhouden",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "RestAPI_eBoekhouden",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "eBoekhouden"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
