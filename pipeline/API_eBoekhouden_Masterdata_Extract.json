@@ -341,8 +341,7 @@
 							"Authorization": {
 								"value": "@variables('SessionId')",
 								"type": "Expression"
-							},
-							"limit": "2000"
+							}
 						}
 					},
 					"sink": {
@@ -391,7 +390,7 @@
 						"referenceName": "RestAPI_eBoekhouden",
 						"type": "DatasetReference",
 						"parameters": {
-							"endpoint": "/v1/costcenter"
+							"endpoint": "/v1/costcenter?limit=2000"
 						}
 					}
 				],
