@@ -5,13 +5,21 @@
 			"referenceName": "RestAPI_eBoekhouden",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"endpoint": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "eBoekhouden"
 		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
-			"relativeUrl": "/v1/costcenter"
+			"relativeUrl": {
+				"value": "@dataset().endpoint",
+				"type": "Expression"
+			}
 		},
 		"schema": []
 	}
