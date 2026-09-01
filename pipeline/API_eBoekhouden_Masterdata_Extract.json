@@ -45,7 +45,7 @@
 				"typeProperties": {
 					"variableName": "SessionId",
 					"value": {
-						"value": "@json(xml(replace(string(xml(activity('GetSessionID').output.Response)), ':', ''))).soapEnvelope.soapBody.OpenSessionResponse.OpenSessionResult.SessionID",
+						"value": "@activity('GetSessionID').output",
 						"type": "Expression"
 					}
 				}
