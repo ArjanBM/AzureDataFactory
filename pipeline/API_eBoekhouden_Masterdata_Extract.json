@@ -315,8 +315,6 @@
 			{
 				"name": "Kostenplaatsen",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "TruncateTables",
@@ -335,21 +333,12 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "XmlSource",
-						"storeSettings": {
-							"type": "HttpReadSettings",
-							"requestMethod": "POST",
-							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetKostenplaatsen\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
-							"requestBody": {
-								"value": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soap:Header/>\n   <soap:Body>\n      <eb:GetKostenplaatsen>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter></eb:cFilter>\n      </eb:GetKostenplaatsen>\n   </soap:Body>\n</soap:Envelope>",
-								"type": "Expression"
-							},
-							"requestTimeout": ""
-						},
-						"formatSettings": {
-							"type": "XmlReadSettings",
-							"validationMode": "none",
-							"namespaces": true
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
 						}
 					},
 					"sink": {
@@ -379,9 +368,17 @@
 									"type": "String"
 								}
 							}
-						]
+						],
+						"collectionReference": "$['soap:Envelope']['soap:Body']['GetKostenplaatsenResponse']['GetKostenplaatsenResult']['Kostenplaatsen']['cKostenplaats']",
+						"mapComplexValuesToString": false
 					}
 				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_eBoekhouden_Kostenplaatsen",
+						"type": "DatasetReference"
+					}
+				],
 				"outputs": [
 					{
 						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
