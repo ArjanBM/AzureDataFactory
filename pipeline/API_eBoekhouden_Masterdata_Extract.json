@@ -47,7 +47,7 @@
 				"typeProperties": {
 					"variableName": "SessionId",
 					"value": {
-						"value": "@activity('GetSessionID').output",
+						"value": "@activity('GetSessionID').output.token",
 						"type": "Expression"
 					}
 				}
