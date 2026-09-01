@@ -342,9 +342,6 @@
 								"value": "@variables('SessionId')",
 								"type": "Expression"
 							}
-						},
-						"paginationRules": {
-							"QueryParameters.offset": "RANGE:0::100"
 						}
 					},
 					"sink": {
