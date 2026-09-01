@@ -1,47 +1,6 @@
 {
 	"name": "SoapEBoekhouden",
 	"properties": {
-		"activities": [
-			{
-				"name": "SoapEBoekhoudenMasterdataToSQL",
-				"type": "ExecutePipeline",
-				"dependsOn": [],
-				"policy": {
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "SoapEBoekhoudenMasterdataToSQL",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true
-				}
-			},
-			{
-				"name": "SoapEBoekhoudenMutatiesToSQL",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "SoapEBoekhoudenMasterdataToSQL",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
-				"policy": {
-					"secureInput": true
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "SoapEBoekhoudenMutatiesToSQL",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true
-				}
-			}
-		],
 		"folder": {
 			"name": "Extract/eBoekhouden"
 		},
