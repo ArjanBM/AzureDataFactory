@@ -195,17 +195,9 @@
 									"type": "String"
 								}
 							}
-						],
-						"collectionReference": "$['soap:Envelope']['soap:Body']['GetRelatiesResponse']['GetRelatiesResult']['Relaties']['cRelatie']",
-						"mapComplexValuesToString": false
+						]
 					}
 				},
-				"inputs": [
-					{
-						"referenceName": "SOAP_eBoekhouden",
-						"type": "DatasetReference"
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "SQL_Stage_eBoekhouden_Relaties",
@@ -305,17 +297,9 @@
 									"type": "String"
 								}
 							}
-						],
-						"collectionReference": "$['soap:Envelope']['soap:Body']['GetGrootboekrekeningenResponse']['GetGrootboekrekeningenResult']['Rekeningen']['cGrootboekrekening']",
-						"mapComplexValuesToString": false
+						]
 					}
 				},
-				"inputs": [
-					{
-						"referenceName": "SOAP_eBoekhouden",
-						"type": "DatasetReference"
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "SQL_Stage_eBoekhouden_GrootboekRekeningen",
@@ -388,17 +372,9 @@
 									"type": "String"
 								}
 							}
-						],
-						"collectionReference": "$['soap:Envelope']['soap:Body']['GetKostenplaatsenResponse']['GetKostenplaatsenResult']['Kostenplaatsen']['cKostenplaats']",
-						"mapComplexValuesToString": false
+						]
 					}
 				},
-				"inputs": [
-					{
-						"referenceName": "SOAP_eBoekhouden",
-						"type": "DatasetReference"
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",

@@ -195,17 +195,9 @@
 												"type": "String"
 											}
 										}
-									],
-									"collectionReference": "$['soap:Envelope']['soap:Body']['GetMutatiesResponse']['GetMutatiesResult']['Mutaties']['cMutatieList']",
-									"mapComplexValuesToString": true
+									]
 								}
 							},
-							"inputs": [
-								{
-									"referenceName": "SOAP_eBoekhouden",
-									"type": "DatasetReference"
-								}
-							],
 							"outputs": [
 								{
 									"referenceName": "SQL_Stage_eBoekhouden_Mutaties",

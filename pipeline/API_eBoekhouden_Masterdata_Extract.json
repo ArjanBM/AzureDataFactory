@@ -55,14 +55,7 @@
 				"type": "Copy",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
-				"dependsOn": [
-					{
-						"activity": "GetKostenplaatsenToSQL",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -198,17 +191,9 @@
 									"type": "String"
 								}
 							}
-						],
-						"collectionReference": "$['soap:Envelope']['soap:Body']['GetRelatiesResponse']['GetRelatiesResult']['Relaties']['cRelatie']",
-						"mapComplexValuesToString": false
+						]
 					}
 				},
-				"inputs": [
-					{
-						"referenceName": "API_eBoekhouden",
-						"type": "DatasetReference"
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "SQL_Stage_eBoekhouden_Relaties",
@@ -310,17 +295,9 @@
 									"type": "String"
 								}
 							}
-						],
-						"collectionReference": "$['soap:Envelope']['soap:Body']['GetGrootboekrekeningenResponse']['GetGrootboekrekeningenResult']['Rekeningen']['cGrootboekrekening']",
-						"mapComplexValuesToString": false
+						]
 					}
 				},
-				"inputs": [
-					{
-						"referenceName": "API_eBoekhouden",
-						"type": "DatasetReference"
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "SQL_Stage_eBoekhouden_GrootboekRekeningen",
@@ -331,6 +308,8 @@
 			{
 				"name": "GetKostenplaatsenToSQL",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "TruncateTables",
@@ -393,17 +372,9 @@
 									"type": "String"
 								}
 							}
-						],
-						"collectionReference": "$['soap:Envelope']['soap:Body']['GetKostenplaatsenResponse']['GetKostenplaatsenResult']['Kostenplaatsen']['cKostenplaats']",
-						"mapComplexValuesToString": false
+						]
 					}
 				},
-				"inputs": [
-					{
-						"referenceName": "API_eBoekhouden",
-						"type": "DatasetReference"
-					}
-				],
 				"outputs": [
 					{
 						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
@@ -414,6 +385,8 @@
 			{
 				"name": "TruncateTables",
 				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "SetSessionId",
