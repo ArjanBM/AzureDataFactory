@@ -57,7 +57,7 @@
 				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
-						"activity": "API_Kostenplaatsen_Extract",
+						"activity": "Kostenplaatsen",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -313,7 +313,7 @@
 				]
 			},
 			{
-				"name": "API_Kostenplaatsen_Extract",
+				"name": "Kostenplaatsen",
 				"type": "Copy",
 				"state": "Inactive",
 				"onInactiveMarkAs": "Succeeded",
