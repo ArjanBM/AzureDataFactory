@@ -429,7 +429,7 @@
 					"scripts": [
 						{
 							"type": "NonQuery",
-							"text": "TRUNCATE TABLE [Load].[eBoekhouden_Kostenplaatsen];\nTRUNCATE TABLE [Load].[eBoekhouden_Grootboekrekeningen];\nTRUNCATE TABLE [Load].[eBoekhouden_Relaties];"
+							"text": "TRUNCATE TABLE [stage].[eBoekhouden_Kostenplaatsen];\nTRUNCATE TABLE [stage].[eBoekhouden_Grootboekrekeningen];\nTRUNCATE TABLE [stage].[eBoekhouden_Relaties];"
 						}
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
