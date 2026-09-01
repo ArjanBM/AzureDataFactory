@@ -53,6 +53,8 @@
 			{
 				"name": "GetRelatiesToSQL",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "TruncateTables",
@@ -217,6 +219,8 @@
 			{
 				"name": "GetGrootboekrekeningenToSQL",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "GetRelatiesToSQL",
@@ -327,6 +331,8 @@
 			{
 				"name": "GetKostenplaatsenToSQL",
 				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "GetGrootboekrekeningenToSQL",
@@ -410,6 +416,8 @@
 			{
 				"name": "TruncateTables",
 				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "SetSessionId",
