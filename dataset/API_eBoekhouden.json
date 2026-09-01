@@ -1,5 +1,5 @@
 {
-	"name": "SOAP_eBoekhouden",
+	"name": "API_eBoekhouden",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "eBoekhouden_SOAP",
