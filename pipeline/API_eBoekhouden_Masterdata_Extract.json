@@ -390,7 +390,7 @@
 						"referenceName": "RestAPI_eBoekhouden",
 						"type": "DatasetReference",
 						"parameters": {
-							"endpoint": "/v1/costcenter?limit=100&offset={offset}"
+							"endpoint": "/v1/costcenter?limit=2000"
 						}
 					}
 				],
