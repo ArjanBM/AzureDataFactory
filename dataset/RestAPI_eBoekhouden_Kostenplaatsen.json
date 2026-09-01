@@ -1,5 +1,5 @@
 {
-	"name": "RestAPI_eBoekhouden_Kostenplaats",
+	"name": "RestAPI_eBoekhouden_Kostenplaatsen",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "RestAPI_eBoekhouden",
