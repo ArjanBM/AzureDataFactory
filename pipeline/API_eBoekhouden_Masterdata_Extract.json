@@ -388,8 +388,11 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "RestAPI_eBoekhouden_Kostenplaatsen",
-						"type": "DatasetReference"
+						"referenceName": "RestAPI_eBoekhouden",
+						"type": "DatasetReference",
+						"parameters": {
+							"endpoint": "/v1/costcenter"
+						}
 					}
 				],
 				"outputs": [
