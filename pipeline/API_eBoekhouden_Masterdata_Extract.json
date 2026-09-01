@@ -342,6 +342,9 @@
 								"value": "@variables('SessionId')",
 								"type": "Expression"
 							}
+						},
+						"paginationRules": {
+							"QueryParameters.limit": "RANGE:0:100:0"
 						}
 					},
 					"sink": {
