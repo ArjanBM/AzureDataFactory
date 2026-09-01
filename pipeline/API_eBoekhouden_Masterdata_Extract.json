@@ -17,12 +17,13 @@
 				"typeProperties": {
 					"method": "POST",
 					"headers": {
-						"Host": "soap.e-boekhouden.nl",
-						"Content-Type": " application/soap+xml;charset=UTF-8;action=\"http://www.e-boekhouden.nl/soap/OpenSession\"",
-						"Connection": "Keep-Alive"
+						"Content-Type": "application/json"
 					},
-					"url": "https://soap.e-boekhouden.nl/soap.asmx",
-					"body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n\t<soap:Header/>\n\t<soap:Body>\n\t\t<eb:OpenSession>\n\t\t\t<eb:Username>arjan@brabantmaatjes.nl</eb:Username>\n\t\t\t<eb:SecurityCode1>9ce115f379a03251613590375ab0e62f</eb:SecurityCode1>\n\t\t\t<eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n\t\t</eb:OpenSession>\n\t</soap:Body>\n</soap:Envelope>"
+					"url": "https://api.e-boekhouden.nl/v1/session",
+					"body": {
+						"accessToken": "74RK7HgiTjkUzEaVhduNpafZ3yI-36CM_ZtS7deo83K3cTrHd7",
+						"source": "AzureDataFactory"
+					}
 				}
 			},
 			{
