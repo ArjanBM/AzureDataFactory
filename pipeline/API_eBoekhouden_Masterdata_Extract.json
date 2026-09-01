@@ -341,10 +341,8 @@
 							"Authorization": {
 								"value": "@variables('SessionId')",
 								"type": "Expression"
-							}
-						},
-						"paginationRules": {
-							"supportRFC5988": "true"
+							},
+							"limit": "2000"
 						}
 					},
 					"sink": {
