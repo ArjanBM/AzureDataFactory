@@ -29,8 +29,6 @@
 			{
 				"name": "SetSessionId",
 				"type": "SetVariable",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "GetSessionID",
