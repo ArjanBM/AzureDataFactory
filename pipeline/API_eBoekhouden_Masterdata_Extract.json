@@ -1,0 +1,455 @@
+{
+	"name": "API_eBoekhouden_Masterdata_Extract",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetSessionID",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Host": "soap.e-boekhouden.nl",
+						"Content-Type": " application/soap+xml;charset=UTF-8;action=\"http://www.e-boekhouden.nl/soap/OpenSession\"",
+						"Connection": "Keep-Alive"
+					},
+					"url": "https://soap.e-boekhouden.nl/soap.asmx",
+					"body": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n\t<soap:Header/>\n\t<soap:Body>\n\t\t<eb:OpenSession>\n\t\t\t<eb:Username>arjan@brabantmaatjes.nl</eb:Username>\n\t\t\t<eb:SecurityCode1>9ce115f379a03251613590375ab0e62f</eb:SecurityCode1>\n\t\t\t<eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n\t\t</eb:OpenSession>\n\t</soap:Body>\n</soap:Envelope>"
+				}
+			},
+			{
+				"name": "SetSessionId",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetSessionID",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SessionId",
+					"value": {
+						"value": "@json(xml(replace(string(xml(activity('GetSessionID').output.Response)), ':', ''))).soapEnvelope.soapBody.OpenSessionResponse.OpenSessionResult.SessionID",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "GetRelatiesToSQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "TruncateTables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "POST",
+							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetRelaties\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
+							"requestBody": {
+								"value": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soap:Header/>\n   <soap:Body>\n      <eb:GetRelaties>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter></eb:cFilter>\n      </eb:GetRelaties>\n   </soap:Body>\n</soap:Envelope>",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['ID']"
+								},
+								"sink": {
+									"name": "ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['AddDatum']"
+								},
+								"sink": {
+									"name": "AddDatum",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"path": "['Code']"
+								},
+								"sink": {
+									"name": "Code",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Bedrijf']"
+								},
+								"sink": {
+									"name": "Bedrijf",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Plaats']"
+								},
+								"sink": {
+									"name": "Plaats",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Contactpersoon']"
+								},
+								"sink": {
+									"name": "ContactPersoon",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Email']"
+								},
+								"sink": {
+									"name": "Email",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['BTWNummer']"
+								},
+								"sink": {
+									"name": "BTWNummer",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['KvkNummer']"
+								},
+								"sink": {
+									"name": "KvkNummer",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['IBAN']"
+								},
+								"sink": {
+									"name": "IBAN",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['BP']"
+								},
+								"sink": {
+									"name": "BP",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['soap:Envelope']['soap:Body']['GetRelatiesResponse']['GetRelatiesResult']['Relaties']['cRelatie']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SOAP_eBoekhouden",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Stage_eBoekhouden_Relaties",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "GetGrootboekrekeningenToSQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "GetRelatiesToSQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "POST",
+							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetGrootboekrekeningen\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
+							"requestBody": {
+								"value": "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soap:Header/>\n   <soap:Body>\n      <eb:GetGrootboekrekeningen>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter></eb:cFilter>\n      </eb:GetGrootboekrekeningen>\n   </soap:Body>\n</soap:Envelope>",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['ID']"
+								},
+								"sink": {
+									"name": "ID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['Code']"
+								},
+								"sink": {
+									"name": "Code",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Omschrijving']"
+								},
+								"sink": {
+									"name": "Omschrijving",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Categorie']"
+								},
+								"sink": {
+									"name": "Categorie",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['Groep']"
+								},
+								"sink": {
+									"name": "Groep",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['soap:Envelope']['soap:Body']['GetGrootboekrekeningenResponse']['GetGrootboekrekeningenResult']['Rekeningen']['cGrootboekrekening']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SOAP_eBoekhouden",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Stage_eBoekhouden_GrootboekRekeningen",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "GetKostenplaatsenToSQL",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "GetGrootboekrekeningenToSQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "POST",
+							"additionalHeaders": "Accept-Encoding: gzip,deflate\nContent-Type: text/xml;charset=UTF-8\nSOAPAction: \"http://www.e-boekhouden.nl/soap/GetKostenplaatsen\"\nContent-Length: 728\nHost: soap.e-boekhouden.nl\nConnection: Keep-Alive\nUser-Agent: Apache-HttpClient/4.5.5 (Java/16.0.2)",
+							"requestBody": {
+								"value": "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:eb=\"http://www.e-boekhouden.nl/soap\">\n   <soap:Header/>\n   <soap:Body>\n      <eb:GetKostenplaatsen>\n         <eb:SessionID>@{variables('SessionId')}</eb:SessionID>\n         <eb:SecurityCode2>B2661E51-3D04-4CFF-B78D-E0C344993093</eb:SecurityCode2>\n         <eb:cFilter></eb:cFilter>\n      </eb:GetKostenplaatsen>\n   </soap:Body>\n</soap:Envelope>",
+								"type": "Expression"
+							},
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['KostenplaatsId']"
+								},
+								"sink": {
+									"name": "KostenPlaatsId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['Omschrijving']"
+								},
+								"sink": {
+									"name": "Omschrijving",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['soap:Envelope']['soap:Body']['GetKostenplaatsenResponse']['GetKostenplaatsenResult']['Kostenplaatsen']['cKostenplaats']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SOAP_eBoekhouden",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "TruncateTables",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "SetSessionId",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "NonQuery",
+							"text": "TRUNCATE TABLE [Load].[eBoekhouden_Kostenplaatsen];\nTRUNCATE TABLE [Load].[eBoekhouden_Grootboekrekeningen];\nTRUNCATE TABLE [Load].[eBoekhouden_Relaties];"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"variables": {
+			"SessionId": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Extract/eBoekhouden"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
