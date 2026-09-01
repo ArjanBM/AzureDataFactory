@@ -1,0 +1,12 @@
+{
+	"name": "RestAPI_eBoekhouden",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://api.e-boekhouden.nl",
+			"enableServerCertificateValidation": false,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
