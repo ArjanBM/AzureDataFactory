@@ -358,24 +358,33 @@
 						"mappings": [
 							{
 								"source": {
-									"path": "['KostenplaatsId']"
+									"path": "['id']"
 								},
 								"sink": {
-									"name": "KostenPlaatsId",
+									"name": "id",
 									"type": "Int32"
 								}
 							},
 							{
 								"source": {
-									"path": "['Omschrijving']"
+									"path": "['description']"
 								},
 								"sink": {
-									"name": "Omschrijving",
+									"name": "description",
 									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['active']"
+								},
+								"sink": {
+									"name": "active",
+									"type": "Boolean"
 								}
 							}
 						],
-						"collectionReference": "$['soap:Envelope']['soap:Body']['GetKostenplaatsenResponse']['GetKostenplaatsenResult']['Kostenplaatsen']['cKostenplaats']",
+						"collectionReference": "$['items']",
 						"mapComplexValuesToString": false
 					}
 				},
