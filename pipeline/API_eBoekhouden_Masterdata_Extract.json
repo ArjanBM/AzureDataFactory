@@ -344,7 +344,7 @@
 							}
 						},
 						"paginationRules": {
-							"QueryParameters.limit": "RANGE:0:100:0"
+							"QueryParameters.offset": "RANGE:0:5000:100"
 						}
 					},
 					"sink": {
@@ -393,7 +393,7 @@
 						"referenceName": "RestAPI_eBoekhouden",
 						"type": "DatasetReference",
 						"parameters": {
-							"endpoint": "/v1/costcenter"
+							"endpoint": "/v1/costcenter?limit=100&offset={offset}"
 						}
 					}
 				],
