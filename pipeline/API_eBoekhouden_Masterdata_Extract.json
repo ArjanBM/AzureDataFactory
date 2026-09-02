@@ -264,7 +264,7 @@
 						"referenceName": "RestAPI_eBoekhouden",
 						"type": "DatasetReference",
 						"parameters": {
-							"endpoint": "/v1/member?limit=100&offset={offset}"
+							"endpoint": "/v1/relation?limit=100&offset={offset}"
 						}
 					}
 				],
