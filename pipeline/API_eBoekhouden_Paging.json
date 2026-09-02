@@ -27,7 +27,7 @@
 							}
 						},
 						"paginationRules": {
-							"QueryParameters.{offset}": "RANGE:0:8:2",
+							"QueryParameters.{offset}": "RANGE:0::100",
 							"EndCondition:$.items": "Empty"
 						}
 					},
