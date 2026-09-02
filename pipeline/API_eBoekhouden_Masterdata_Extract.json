@@ -5,6 +5,8 @@
 			{
 				"name": "GetSessionID",
 				"type": "WebActivity",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -29,6 +31,8 @@
 			{
 				"name": "SetSessionId",
 				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "GetSessionID",
@@ -404,6 +408,8 @@
 			{
 				"name": "TruncateTables",
 				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "SetSessionId",
