@@ -264,13 +264,13 @@
 						"referenceName": "RestAPI_eBoekhouden",
 						"type": "DatasetReference",
 						"parameters": {
-							"endpoint": "/v1/relations?limit=100&offset={offset}"
+							"endpoint": "/v1/relation?limit=100&offset={offset}"
 						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
+						"referenceName": "SQL_Stage_eBoekhouden_Relaties",
 						"type": "DatasetReference"
 					}
 				]
