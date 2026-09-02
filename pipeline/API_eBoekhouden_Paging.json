@@ -28,7 +28,7 @@
 						},
 						"paginationRules": {
 							"QueryParameters.{offset}": "RANGE:0:8:2",
-							"MaxRequestNumber": "3"
+							"MaxRequestNumber": "10"
 						}
 					},
 					"sink": {
