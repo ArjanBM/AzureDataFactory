@@ -181,6 +181,99 @@
 					],
 					"scriptBlockExecutionTimeout": "02:00:00"
 				}
+			},
+			{
+				"name": "Relaties",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Kostenplaatsen",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"additionalHeaders": {
+							"Authorization": {
+								"value": "@variables('SessionId')",
+								"type": "Expression"
+							}
+						},
+						"paginationRules": {
+							"QueryParameters.{offset}": "RANGE:0::100",
+							"EndCondition:$.items": "Empty"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['description']"
+								},
+								"sink": {
+									"name": "description",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['active']"
+								},
+								"sink": {
+									"name": "active",
+									"type": "Boolean"
+								}
+							}
+						],
+						"collectionReference": "$['items']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_eBoekhouden",
+						"type": "DatasetReference",
+						"parameters": {
+							"endpoint": "/v1/costcenter?limit=100&offset={offset}"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"variables": {
