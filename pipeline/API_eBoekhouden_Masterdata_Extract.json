@@ -346,6 +346,10 @@
 								"value": "@variables('SessionId')",
 								"type": "Expression"
 							}
+						},
+						"paginationRules": {
+							"QueryParameters.{offset}": "RANGE:0::100",
+							"EndCondition:$.items": "Empty"
 						}
 					},
 					"sink": {
@@ -394,7 +398,7 @@
 						"referenceName": "RestAPI_eBoekhouden",
 						"type": "DatasetReference",
 						"parameters": {
-							"endpoint": "/v1/costcenter?limit=2"
+							"endpoint": "/v1/costcenter?limit=100&offset={offset}"
 						}
 					}
 				],
