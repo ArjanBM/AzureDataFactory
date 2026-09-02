@@ -25,6 +25,10 @@
 								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBYklkIjoiNTg2MTc4IiwiQWJTeXN0ZW0iOiJOTCIsIkFkbWluaXN0cmF0aW9uSWQiOiI1ODYxNzgiLCJVc2VySWQiOiI2NDUxMjgiLCJHZUxhbmd1YWdlIjoiTkwiLCJBYXRJZCI6IjE5NzMyIiwiU291cmNlIjoiUG9zdG1hbiIsImV4cCI6MTc4ODM4MjEwMCwiaXNzIjoiYXBpLmUtYm9la2hvdWRlbi5ubCIsImF1ZCI6ImFwaS5lLWJvZWtob3VkZW4ubmwifQ.rhKQ8SwZO-Rz9hUuhTdgsHYDMxdsfn6D3V_nYhlg8WA",
 								"type": "Expression"
 							}
+						},
+						"paginationRules": {
+							"QueryParameters.{offset}": "RANGE:0:8:2",
+							"MaxRequestNumber": "3"
 						}
 					},
 					"sink": {
@@ -73,7 +77,7 @@
 						"referenceName": "RestAPI_eBoekhouden",
 						"type": "DatasetReference",
 						"parameters": {
-							"endpoint": "/v1/costcenter?limit=2&offset=2"
+							"endpoint": "/v1/costcenter?limit=2&offset={offset}"
 						}
 					}
 				],
