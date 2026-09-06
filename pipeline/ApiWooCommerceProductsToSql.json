@@ -208,7 +208,8 @@
 				}
 			},
 			{
-				"name": "MergeFromLoad_WooCommerce_Projects",
+				"name": "WooCommerce_Transform_Products_StageToCore",
+				"description": "",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
@@ -227,7 +228,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[Model].[MergeFromLoad_WooCommerce_Products]"
+					"storedProcedureName": "[Stage].[SP_WooCommerce_Transform_Products_StageToCore]"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDB_BrabantMaatjes",
