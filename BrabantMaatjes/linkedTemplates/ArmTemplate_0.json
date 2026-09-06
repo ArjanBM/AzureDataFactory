@@ -43,6 +43,10 @@
 			"type": "string",
 			"defaultValue": "ck_2e7eacec2e7caa2cfa5b380a98fef7466e85c51d"
 		},
+		"RestAPI_eBoekhouden_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.e-boekhouden.nl"
+		},
 		"RestApi_FooEvents_BrabantMaatjes_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://shop.brabantmaatjes.nl/wp-json/fooevents/v1/"
@@ -50,10 +54,6 @@
 		"RestApi_Sharepoint_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://stichtingbrabantmaatjes.sharepoint.com"
-		},
-		"eBoekhouden_SOAP_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://soap.e-boekhouden.nl"
 		}
 	},
 	"variables": {
@@ -568,6 +568,21 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/RestAPI_eBoekhouden')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RestAPI_eBoekhouden_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": false,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/RestApi_FooEvents_BrabantMaatjes')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -591,21 +606,6 @@
 				"type": "RestService",
 				"typeProperties": {
 					"url": "[parameters('RestApi_Sharepoint_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Anonymous"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/eBoekhouden_SOAP')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "HttpServer",
-				"typeProperties": {
-					"url": "[parameters('eBoekhouden_SOAP_properties_typeProperties_url')]",
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Anonymous"
 				}
@@ -758,28 +758,34 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SOAP_eBoekhouden')]",
+			"name": "[concat(parameters('factoryName'), '/RestAPI_eBoekhouden')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "eBoekhouden_SOAP",
+					"referenceName": "RestAPI_eBoekhouden",
 					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"endpoint": {
+						"type": "string"
+					}
 				},
 				"folder": {
 					"name": "eBoekhouden"
 				},
 				"annotations": [],
-				"type": "Xml",
+				"type": "RestResource",
 				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation",
-						"relativeUrl": "/soap.asmx"
+					"relativeUrl": {
+						"value": "@dataset().endpoint",
+						"type": "Expression"
 					}
-				}
+				},
+				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/eBoekhouden_SOAP')]"
+				"[concat(variables('factoryId'), '/linkedServices/RestAPI_eBoekhouden')]"
 			]
 		},
 		{
@@ -941,7 +947,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "MolliePayments"
+					"name": "Mollie"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -1001,7 +1007,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Refunds')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Settlements')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1050,7 +1056,7 @@
 				],
 				"typeProperties": {
 					"schema": "Stage",
-					"table": "Mollie_Refunds"
+					"table": "Mollie_Settlements"
 				}
 			},
 			"dependsOn": [
@@ -1058,7 +1064,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Settlements')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_FooEvents_Checkin')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1067,47 +1073,54 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "MolliePayments"
+					"name": "WooCommerce"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [
 					{
-						"name": "id",
+						"name": "Ticket_Id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Order_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Product_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Ticket_Number",
 						"type": "nvarchar"
 					},
 					{
-						"name": "createdAt",
+						"name": "TicketStatus",
 						"type": "nvarchar"
 					},
 					{
-						"name": "amount",
+						"name": "Ticket_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "EventLogStatus",
 						"type": "nvarchar"
 					},
 					{
-						"name": "description",
-						"type": "nvarchar"
-					},
-					{
-						"name": "paymentId",
-						"type": "nvarchar"
-					},
-					{
-						"name": "status",
-						"type": "nvarchar"
-					},
-					{
-						"name": "settlementAmount",
-						"type": "nvarchar"
-					},
-					{
-						"name": "settlementId",
-						"type": "nvarchar"
+						"name": "EventLogStatus_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
 				],
 				"typeProperties": {
 					"schema": "Stage",
-					"table": "Mollie_Settlements"
+					"table": "FooEvents_Checkin"
 				}
 			},
 			"dependsOn": [

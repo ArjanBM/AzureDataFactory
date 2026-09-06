@@ -32,14 +32,14 @@
 		"RestAPI_WooCommerce_BrabantMaatjes_properties_typeProperties_userName": {
 			"value": "ck_2e7eacec2e7caa2cfa5b380a98fef7466e85c51d"
 		},
+		"RestAPI_eBoekhouden_properties_typeProperties_url": {
+			"value": "https://api.e-boekhouden.nl"
+		},
 		"RestApi_FooEvents_BrabantMaatjes_properties_typeProperties_url": {
 			"value": "https://shop.brabantmaatjes.nl/wp-json/fooevents/v1/"
 		},
 		"RestApi_Sharepoint_properties_typeProperties_url": {
 			"value": "https://stichtingbrabantmaatjes.sharepoint.com"
-		},
-		"eBoekhouden_SOAP_properties_typeProperties_url": {
-			"value": "https://soap.e-boekhouden.nl"
 		},
 		"containerUri": {
 			"value": ""
