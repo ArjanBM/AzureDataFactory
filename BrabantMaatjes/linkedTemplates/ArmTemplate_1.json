@@ -832,7 +832,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [load].[FooEvents_Checkin]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[FooEvents_Checkin]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
