@@ -69,8 +69,6 @@
 					{
 						"name": "GetSessionID",
 						"type": "WebActivity",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -95,8 +93,6 @@
 					{
 						"name": "SetSessionId",
 						"type": "SetVariable",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "GetSessionID",
@@ -616,7 +612,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Model].[WooCommerce_TicketOverview]",
+								"sqlReaderQuery": "SELECT CONVERT(NVARCHAR(20),DATEADD(HH,-12,COALESCE(MAX([DatumLaatstGewijzigd]),CONVERT(DATETIME,'2023/01/01'))),126) AS [DatumLaatstGewijzigd] FROM [Core].[WooCommerce_Tickets]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -1664,7 +1660,7 @@
 						}
 					},
 					{
-						"name": "MergeFromLoad_WooCommerce_OrderRegels",
+						"name": "WooCommerce_Transform_Tickets_StageToCore",
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
@@ -1683,7 +1679,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[[Model].[MergeFromLoad_WooCommerce_TicketOverview]"
+							"storedProcedureName": "[[Stage].[SP_WooCommerce_Transform_Tickets_StageToCore]"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDB_BrabantMaatjes",
@@ -1926,7 +1922,8 @@
 						}
 					},
 					{
-						"name": "MergeFromLoad_WooCommerce_Projects",
+						"name": "WooCommerce_Transform_Products_StageToCore",
+						"description": "",
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
@@ -1945,7 +1942,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[[Model].[MergeFromLoad_WooCommerce_Products]"
+							"storedProcedureName": "[[Stage].[SP_WooCommerce_Transform_Products_StageToCore]"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDB_BrabantMaatjes",
@@ -3985,7 +3982,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
