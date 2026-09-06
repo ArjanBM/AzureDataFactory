@@ -203,6 +203,15 @@
 							},
 							{
 								"source": {
+									"path": "['code']"
+								},
+								"sink": {
+									"name": "code",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
 									"path": "['description']"
 								},
 								"sink": {
@@ -212,11 +221,20 @@
 							},
 							{
 								"source": {
-									"path": "['active']"
+									"path": "['category']"
 								},
 								"sink": {
-									"name": "active",
-									"type": "Boolean"
+									"name": "category",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['group']"
+								},
+								"sink": {
+									"name": "group",
+									"type": "String"
 								}
 							}
 						],
@@ -235,7 +253,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Stage_eBoekhouden_Relaties",
+						"referenceName": "SQL_Stage_eBoekhouden_GrootboekRekeningen",
 						"type": "DatasetReference"
 					}
 				]
