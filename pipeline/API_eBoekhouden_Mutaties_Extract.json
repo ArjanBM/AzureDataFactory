@@ -1,0 +1,270 @@
+{
+	"name": "API_eBoekhouden_Mutaties_Extract",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetSessionID",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"url": "https://api.e-boekhouden.nl/v1/session",
+					"body": {
+						"accessToken": "74RK7HgiTjkUzEaVhduNpafZ3yI-36CM_ZtS7deo83K3cTrHd7",
+						"source": "Postman"
+					}
+				}
+			},
+			{
+				"name": "SetSessionId",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "GetSessionID",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SessionId",
+					"value": {
+						"value": "@activity('GetSessionID').output.token",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Kostenplaatsen",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "SetSessionId",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"additionalHeaders": {
+							"Authorization": {
+								"value": "@variables('SessionId')",
+								"type": "Expression"
+							}
+						},
+						"paginationRules": {
+							"QueryParameters.{offset}": "RANGE:0::100",
+							"EndCondition:$.items": "Empty"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_Kostenplaatsen];",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['description']"
+								},
+								"sink": {
+									"name": "description",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['active']"
+								},
+								"sink": {
+									"name": "active",
+									"type": "Boolean"
+								}
+							}
+						],
+						"collectionReference": "$['items']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_eBoekhouden",
+						"type": "DatasetReference",
+						"parameters": {
+							"endpoint": "/v1/costcenter?limit=100&offset={offset}"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Grootboekrekeningen",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Kostenplaatsen",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"additionalHeaders": {
+							"Authorization": {
+								"value": "@variables('SessionId')",
+								"type": "Expression"
+							}
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_Grootboekrekeningen];",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['code']"
+								},
+								"sink": {
+									"name": "code",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['description']"
+								},
+								"sink": {
+									"name": "description",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['category']"
+								},
+								"sink": {
+									"name": "category",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['group']"
+								},
+								"sink": {
+									"name": "group",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['items']",
+						"mapComplexValuesToString": false
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "RestAPI_eBoekhouden",
+						"type": "DatasetReference",
+						"parameters": {
+							"endpoint": "/v1/ledger?limit=500"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQL_Stage_eBoekhouden_GrootboekRekeningen",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"variables": {
+			"SessionId": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Extract/eBoekhouden"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-08-15T18:39:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
