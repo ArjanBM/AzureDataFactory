@@ -111,11 +111,6 @@
 									"name": "entryNumber",
 									"type": "String"
 								}
-							},
-							{
-								"source": {
-									"path": "$['count']"
-								}
 							}
 						],
 						"collectionReference": "$['items']",
