@@ -13,6 +13,92 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/Sharepoint_ToSQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Activiteiten2026ToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Refresh Sharepoint Access Token",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Sharepoint_Activiteiten2026ToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "SharepointListItemsToProductOverview",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Activiteiten2026ToSQL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[Model].[SharepointListItemsToProductOverview]"
+						},
+						"linkedServiceName": {
+							"referenceName": "AzureDB_BrabantMaatjes",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Refresh Sharepoint Access Token",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Sharepoint_RefreshAuthToken",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Proeftuin/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DailyUpdate')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -90,7 +176,9 @@
 				"annotations": [],
 				"lastPublishTime": "2026-08-11T16:43:30Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Sharepoint_ToSQL')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DailyAtMidnight')]",
