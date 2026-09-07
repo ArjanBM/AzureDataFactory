@@ -404,6 +404,53 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_eBoekhouden_MutatieRegels')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "eBoekhouden"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "mutatie_description",
+						"type": "varchar"
+					},
+					{
+						"name": "ledgerId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "amount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "description",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "Stage",
+					"table": "eBoekhouden_MutatieRegels"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/API_eBoekhouden_Masterdata_Extract')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -434,35 +481,11 @@
 						}
 					},
 					{
-						"name": "SetSessionId",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "GetSessionID",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "SessionId",
-							"value": {
-								"value": "@activity('GetSessionID').output.token",
-								"type": "Expression"
-							}
-						}
-					},
-					{
 						"name": "Kostenplaatsen",
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "SetSessionId",
+								"activity": "GetSessionID",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -484,7 +507,7 @@
 								"requestMethod": "GET",
 								"additionalHeaders": {
 									"Authorization": {
-										"value": "@variables('SessionId')",
+										"value": "@activity('GetSessionID').output.token",
 										"type": "Expression"
 									}
 								},
@@ -580,7 +603,7 @@
 								"requestMethod": "GET",
 								"additionalHeaders": {
 									"Authorization": {
-										"value": "@variables('SessionId')",
+										"value": "@activity('GetSessionID').output.token",
 										"type": "Expression"
 									}
 								}
@@ -666,11 +689,6 @@
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"SessionId": {
-						"type": "String"
-					}
 				},
 				"folder": {
 					"name": "Extract/eBoekhouden"
@@ -798,12 +816,6 @@
 											"name": "entryNumber",
 											"type": "String"
 										}
-									},
-									{
-										"source": {
-											"path": "$['count']"
-										},
-										"sink": {}
 									}
 								],
 								"collectionReference": "$['items']",
@@ -854,11 +866,6 @@
 				],
 				"policy": {
 					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"SessionId": {
-						"type": "String"
-					}
 				},
 				"folder": {
 					"name": "Extract/eBoekhouden"
@@ -2663,74 +2670,201 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ApiWooCommerce')]",
+			"name": "[concat(parameters('factoryName'), '/API_eBoekhouden_MutatieRegels_Extract')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "ApiWooCommerceProductsToSQL",
-						"type": "ExecutePipeline",
+						"name": "GetSessionID",
+						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
 							"secureInput": false
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiWooCommerceProductsToSql",
-								"type": "PipelineReference"
+							"method": "POST",
+							"headers": {
+								"Content-Type": "application/json"
 							},
-							"waitOnCompletion": true,
-							"parameters": {}
+							"url": "https://api.e-boekhouden.nl/v1/session",
+							"body": {
+								"accessToken": "74RK7HgiTjkUzEaVhduNpafZ3yI-36CM_ZtS7deo83K3cTrHd7",
+								"source": "Postman"
+							}
 						}
 					},
 					{
-						"name": "ApiWooCommerceOrdersToSQL",
-						"type": "ExecutePipeline",
+						"name": "Lookup Mutaties",
+						"type": "Lookup",
 						"dependsOn": [
 							{
-								"activity": "ApiFooEventsCheckinToSQL",
+								"activity": "GetSessionID",
 								"dependencyConditions": [
 									"Completed"
 								]
 							}
 						],
 						"policy": {
-							"secureInput": true
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiWooCommerceOrdersToSQL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "ApiFooEventsCheckinToSQL",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ApiWooCommerceProductsToSQL",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
 							"secureInput": false
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiFooEventsCheckinToSQL",
-								"type": "PipelineReference"
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderStoredProcedureName": "[[Stage].[SP_eBoekhouden_Get_Muties_ForMutatieRegelsExtract]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
 							},
-							"waitOnCompletion": true,
-							"parameters": {}
+							"dataset": {
+								"referenceName": "AzureDB_BrabantMaatjes",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "MutatieRegels for each Mutatie",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lookup Mutaties",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lookup Mutaties').output.value",
+								"type": "Expression"
+							},
+							"isSequential": false,
+							"activities": [
+								{
+									"name": "Get MutatieRegels",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"additionalHeaders": {
+												"Authorization": {
+													"value": "@activity('GetSessionID').output.token",
+													"type": "Expression"
+												}
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_MutatieRegels]",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false,
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"path": "$['id']"
+													},
+													"sink": {
+														"name": "id",
+														"type": "Int32"
+													}
+												},
+												{
+													"source": {
+														"path": "$['description']"
+													},
+													"sink": {
+														"name": "mutatie_description",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "$['ledgerId']"
+													},
+													"sink": {
+														"name": "ledgerId",
+														"type": "Int32"
+													}
+												},
+												{
+													"source": {
+														"path": "$['rows']['ledgerId']"
+													},
+													"sink": {
+														"name": "ledgerId",
+														"type": "Int32"
+													}
+												},
+												{
+													"source": {
+														"path": "$['rows']['amount']"
+													},
+													"sink": {
+														"name": "amount",
+														"type": "Decimal"
+													}
+												},
+												{
+													"source": {
+														"path": "$['rows']['description']"
+													},
+													"sink": {
+														"name": "description",
+														"type": "String"
+													}
+												}
+											],
+											"collectionReference": "",
+											"mapComplexValuesToString": false
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "RestAPI_eBoekhouden",
+											"type": "DatasetReference",
+											"parameters": {
+												"endpoint": "/v1/mutation/@{item().Id}"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SQL_Stage_eBoekhouden_MutatieRegels",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
 						}
 					}
 				],
@@ -2738,101 +2872,13 @@
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "Proeftuin/WooCommerce"
+					"name": "Extract/eBoekhouden"
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerceProductsToSql')]",
-				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerceOrdersToSQL')]",
-				"[concat(variables('factoryId'), '/pipelines/ApiFooEventsCheckinToSQL')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Model_to_Sharepoint')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Refresh Sharepoint Access Token",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Sharepoint_RefreshAuthToken",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Model_UpdateSharepoint",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Refresh Sharepoint Access Token",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Model_UpdateSharepoint",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Model_AddToSharepoint",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Model_UpdateSharepoint",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Model_AddToSharepoint",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "Proeftuin/Sharepoint"
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-08-15T18:39:36Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Model_UpdateSharepoint')]",
-				"[concat(variables('factoryId'), '/pipelines/Model_AddToSharepoint')]"
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_eBoekhouden_MutatieRegels')]"
 			]
 		}
 	]
