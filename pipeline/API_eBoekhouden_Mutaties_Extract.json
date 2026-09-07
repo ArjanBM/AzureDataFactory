@@ -88,7 +88,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_Kostenplaatsen];",
+						"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_Mutaties];",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
@@ -108,20 +108,61 @@
 							},
 							{
 								"source": {
-									"path": "['description']"
+									"path": "['type']"
 								},
 								"sink": {
-									"name": "description",
+									"name": "type",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['date']"
+								},
+								"sink": {
+									"name": "date",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"path": "['invoiceNumber']"
+								},
+								"sink": {
+									"name": "invoiceNumber",
 									"type": "String"
 								}
 							},
 							{
 								"source": {
-									"path": "['active']"
+									"path": "['ledgerId']"
 								},
 								"sink": {
-									"name": "active",
-									"type": "Boolean"
+									"name": "ledgerId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['amount']"
+								},
+								"sink": {
+									"name": "amount",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"path": "['entryNumber']"
+								},
+								"sink": {
+									"name": "entryNumber",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['count']"
 								}
 							}
 						],
@@ -140,7 +181,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Stage_eBoekhouden_Kostenplaatsen",
+						"referenceName": "SQL_Stage_eBoekhouden_Mutaties",
 						"type": "DatasetReference"
 					}
 				]
