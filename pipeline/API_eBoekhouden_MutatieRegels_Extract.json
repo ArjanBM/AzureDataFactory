@@ -3,130 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Mutaties",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.010",
-						"requestMethod": "GET",
-						"additionalHeaders": {
-							"Authorization": {
-								"value": "@activity('GetSessionID').output.token",
-								"type": "Expression"
-							}
-						},
-						"paginationRules": {
-							"QueryParameters.{offset}": "RANGE:5800::100",
-							"EndCondition:$.items": "Empty"
-						}
-					},
-					"sink": {
-						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_Mutaties];",
-						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false,
-						"disableMetricsCollection": false
-					},
-					"enableStaging": false,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"path": "['id']"
-								},
-								"sink": {
-									"name": "id",
-									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"path": "['type']"
-								},
-								"sink": {
-									"name": "type",
-									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"path": "['date']"
-								},
-								"sink": {
-									"name": "date",
-									"type": "DateTime"
-								}
-							},
-							{
-								"source": {
-									"path": "['invoiceNumber']"
-								},
-								"sink": {
-									"name": "invoiceNumber",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"path": "['ledgerId']"
-								},
-								"sink": {
-									"name": "ledgerId",
-									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"path": "['amount']"
-								},
-								"sink": {
-									"name": "amount",
-									"type": "Decimal"
-								}
-							},
-							{
-								"source": {
-									"path": "['entryNumber']"
-								},
-								"sink": {
-									"name": "entryNumber",
-									"type": "String"
-								}
-							}
-						],
-						"collectionReference": "$['items']",
-						"mapComplexValuesToString": false
-					}
-				},
-				"inputs": [
-					{
-						"referenceName": "RestAPI_eBoekhouden",
-						"type": "DatasetReference",
-						"parameters": {
-							"endpoint": "/v1/mutation?limit=100&offset={offset}"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "SQL_Stage_eBoekhouden_Mutaties",
-						"type": "DatasetReference"
-					}
-				]
-			},
-			{
 				"name": "GetSessionID",
 				"type": "WebActivity",
 				"dependsOn": [],
@@ -181,6 +57,145 @@
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Payments for each Settlement",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Settlements').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"activities": [
+						{
+							"name": "Mutaties",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"additionalHeaders": {
+										"Authorization": {
+											"value": "@activity('GetSessionID').output.token",
+											"type": "Expression"
+										}
+									},
+									"paginationRules": {
+										"QueryParameters.{offset}": "RANGE:5800::100",
+										"EndCondition:$.items": "Empty"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_Mutaties];",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"path": "['id']"
+											},
+											"sink": {
+												"name": "id",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"path": "['type']"
+											},
+											"sink": {
+												"name": "type",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"path": "['date']"
+											},
+											"sink": {
+												"name": "date",
+												"type": "DateTime"
+											}
+										},
+										{
+											"source": {
+												"path": "['invoiceNumber']"
+											},
+											"sink": {
+												"name": "invoiceNumber",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['ledgerId']"
+											},
+											"sink": {
+												"name": "ledgerId",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"path": "['amount']"
+											},
+											"sink": {
+												"name": "amount",
+												"type": "Decimal"
+											}
+										},
+										{
+											"source": {
+												"path": "['entryNumber']"
+											},
+											"sink": {
+												"name": "entryNumber",
+												"type": "String"
+											}
+										}
+									],
+									"collectionReference": "$['items']",
+									"mapComplexValuesToString": false
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "RestAPI_eBoekhouden",
+									"type": "DatasetReference",
+									"parameters": {
+										"endpoint": "/v1/mutation?limit=100&offset={offset}"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SQL_Stage_eBoekhouden_Mutaties",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
 				}
 			}
 		],
