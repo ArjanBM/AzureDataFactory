@@ -163,11 +163,6 @@
 				}
 			}
 		],
-		"variables": {
-			"SessionId": {
-				"type": "String"
-			}
-		},
 		"folder": {
 			"name": "Extract/eBoekhouden"
 		},
