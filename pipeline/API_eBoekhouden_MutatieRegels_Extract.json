@@ -60,7 +60,7 @@
 				}
 			},
 			{
-				"name": "Payments for each Settlement",
+				"name": "MutatieRegels for each Mutatie",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -73,7 +73,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Mutaties').output.value",
+						"value": "@activity('Lookup Mutaties').output.value",
 						"type": "Expression"
 					},
 					"isSequential": false,
