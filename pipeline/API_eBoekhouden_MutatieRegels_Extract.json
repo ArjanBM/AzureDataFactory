@@ -134,15 +134,6 @@
 										},
 										{
 											"source": {
-												"path": "$['ledgerId']"
-											},
-											"sink": {
-												"name": "ledgerId",
-												"type": "Int32"
-											}
-										},
-										{
-											"source": {
 												"path": "$['rows']['ledgerId']"
 											},
 											"sink": {
