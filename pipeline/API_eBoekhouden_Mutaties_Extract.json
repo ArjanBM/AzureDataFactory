@@ -3,61 +3,13 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "GetSessionID",
-				"type": "WebActivity",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"method": "POST",
-					"headers": {
-						"Content-Type": "application/json"
-					},
-					"url": "https://api.e-boekhouden.nl/v1/session",
-					"body": {
-						"accessToken": "74RK7HgiTjkUzEaVhduNpafZ3yI-36CM_ZtS7deo83K3cTrHd7",
-						"source": "Postman"
-					}
-				}
-			},
-			{
-				"name": "SetSessionId",
-				"type": "SetVariable",
+				"name": "Mutaties",
+				"type": "Copy",
 				"dependsOn": [
 					{
 						"activity": "GetSessionID",
 						"dependencyConditions": [
 							"Completed"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "SessionId",
-					"value": {
-						"value": "@activity('GetSessionID').output.token",
-						"type": "Expression"
-					}
-				}
-			},
-			{
-				"name": "Kostenplaatsen",
-				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "SetSessionId",
-						"dependencyConditions": [
-							"Succeeded"
 						]
 					}
 				],
@@ -77,7 +29,7 @@
 						"requestMethod": "GET",
 						"additionalHeaders": {
 							"Authorization": {
-								"value": "@variables('SessionId')",
+								"value": "@activity('GetSessionID').output.token",
 								"type": "Expression"
 							}
 						},
@@ -185,6 +137,30 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "GetSessionID",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"url": "https://api.e-boekhouden.nl/v1/session",
+					"body": {
+						"accessToken": "74RK7HgiTjkUzEaVhduNpafZ3yI-36CM_ZtS7deo83K3cTrHd7",
+						"source": "Postman"
+					}
+				}
 			}
 		],
 		"variables": {
