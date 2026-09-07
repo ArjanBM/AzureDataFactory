@@ -17,18 +17,7 @@
 				"precision": 10
 			},
 			{
-				"name": "type",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "date",
-				"type": "datetime",
-				"precision": 23,
-				"scale": 3
-			},
-			{
-				"name": "invoiceNumber",
+				"name": "mutatie_description",
 				"type": "varchar"
 			},
 			{
@@ -43,13 +32,13 @@
 				"scale": 2
 			},
 			{
-				"name": "entryNumber",
+				"name": "description",
 				"type": "varchar"
 			}
 		],
 		"typeProperties": {
 			"schema": "Stage",
-			"table": "eBoekhouden_Mutaties"
+			"table": "eBoekhouden_MutatieRegels"
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
