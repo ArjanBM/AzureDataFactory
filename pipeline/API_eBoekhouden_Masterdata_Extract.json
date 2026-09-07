@@ -27,35 +27,11 @@
 				}
 			},
 			{
-				"name": "SetSessionId",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "GetSessionID",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "SessionId",
-					"value": {
-						"value": "@activity('GetSessionID').output.token",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "Kostenplaatsen",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "SetSessionId",
+						"activity": "GetSessionID",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -77,7 +53,7 @@
 						"requestMethod": "GET",
 						"additionalHeaders": {
 							"Authorization": {
-								"value": "@variables('SessionId')",
+								"value": "@activity('GetSessionID').output.token",
 								"type": "Expression"
 							}
 						},
@@ -172,7 +148,7 @@
 						"requestMethod": "GET",
 						"additionalHeaders": {
 							"Authorization": {
-								"value": "@variables('SessionId')",
+								"value": "@activity('GetSessionID').output.token",
 								"type": "Expression"
 							}
 						}
