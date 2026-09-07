@@ -27,7 +27,7 @@
 				}
 			},
 			{
-				"name": "Get Mutaties",
+				"name": "Lookup Mutaties",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -64,7 +64,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Mutaties",
+						"activity": "Lookup Mutaties",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -79,7 +79,7 @@
 					"isSequential": false,
 					"activities": [
 						{
-							"name": "Mutaties",
+							"name": "Get MutatieRegels",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -101,10 +101,6 @@
 											"value": "@activity('GetSessionID').output.token",
 											"type": "Expression"
 										}
-									},
-									"paginationRules": {
-										"QueryParameters.{offset}": "RANGE:5800::100",
-										"EndCondition:$.items": "Empty"
 									}
 								},
 								"sink": {
@@ -191,7 +187,7 @@
 									"referenceName": "RestAPI_eBoekhouden",
 									"type": "DatasetReference",
 									"parameters": {
-										"endpoint": "/v1/mutation?limit=100&offset={offset}"
+										"endpoint": "/v1/mutation/@{item().Id}"
 									}
 								}
 							],
