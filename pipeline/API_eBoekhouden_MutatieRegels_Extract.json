@@ -62,11 +62,18 @@
 			{
 				"name": "Payments for each Settlement",
 				"type": "ForEach",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Get Mutaties",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Settlements').output.value",
+						"value": "@activity('Get Mutaties').output.value",
 						"type": "Expression"
 					},
 					"isSequential": false,
