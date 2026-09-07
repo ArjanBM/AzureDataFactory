@@ -105,7 +105,7 @@
 								},
 								"sink": {
 									"type": "AzureSqlSink",
-									"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_Mutaties];",
+									"preCopyScript": "TRUNCATE TABLE [stage].[eBoekhouden_MutatieRegels]",
 									"writeBehavior": "insert",
 									"sqlWriterUseTableLock": false,
 									"disableMetricsCollection": false
@@ -116,7 +116,7 @@
 									"mappings": [
 										{
 											"source": {
-												"path": "['id']"
+												"path": "$['id']"
 											},
 											"sink": {
 												"name": "id",
@@ -125,34 +125,16 @@
 										},
 										{
 											"source": {
-												"path": "['type']"
+												"path": "$['description']"
 											},
 											"sink": {
-												"name": "type",
-												"type": "Int32"
-											}
-										},
-										{
-											"source": {
-												"path": "['date']"
-											},
-											"sink": {
-												"name": "date",
-												"type": "DateTime"
-											}
-										},
-										{
-											"source": {
-												"path": "['invoiceNumber']"
-											},
-											"sink": {
-												"name": "invoiceNumber",
+												"name": "mutatie_description",
 												"type": "String"
 											}
 										},
 										{
 											"source": {
-												"path": "['ledgerId']"
+												"path": "$['ledgerId']"
 											},
 											"sink": {
 												"name": "ledgerId",
@@ -161,7 +143,16 @@
 										},
 										{
 											"source": {
-												"path": "['amount']"
+												"path": "$['rows']['ledgerId']"
+											},
+											"sink": {
+												"name": "ledgerId",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"path": "$['rows']['amount']"
 											},
 											"sink": {
 												"name": "amount",
@@ -170,15 +161,15 @@
 										},
 										{
 											"source": {
-												"path": "['entryNumber']"
+												"path": "$['rows']['description']"
 											},
 											"sink": {
-												"name": "entryNumber",
+												"name": "description",
 												"type": "String"
 											}
 										}
 									],
-									"collectionReference": "$['items']",
+									"collectionReference": "",
 									"mapComplexValuesToString": false
 								}
 							},
@@ -193,7 +184,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "SQL_Stage_eBoekhouden_Mutaties",
+									"referenceName": "SQL_Stage_eBoekhouden_MutatieRegels",
 									"type": "DatasetReference"
 								}
 							]
