@@ -133,7 +133,7 @@
 										},
 										{
 											"source": {
-												"path": "$['rows']['ledgerId']"
+												"path": "['ledgerId']"
 											},
 											"sink": {
 												"name": "ledgerId",
@@ -142,7 +142,7 @@
 										},
 										{
 											"source": {
-												"path": "$['rows']['amount']"
+												"path": "['amount']"
 											},
 											"sink": {
 												"name": "amount",
@@ -151,7 +151,7 @@
 										},
 										{
 											"source": {
-												"path": "$['rows']['description']"
+												"path": "['description']"
 											},
 											"sink": {
 												"name": "description",
@@ -159,7 +159,7 @@
 											}
 										}
 									],
-									"collectionReference": "",
+									"collectionReference": "$['rows']",
 									"mapComplexValuesToString": false
 								}
 							},
