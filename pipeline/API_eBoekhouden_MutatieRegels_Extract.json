@@ -5,14 +5,7 @@
 			{
 				"name": "Mutaties",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "GetSessionID",
-						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -155,6 +148,39 @@
 						"accessToken": "74RK7HgiTjkUzEaVhduNpafZ3yI-36CM_ZtS7deo83K3cTrHd7",
 						"source": "Postman"
 					}
+				}
+			},
+			{
+				"name": "Get Mutaties",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "GetSessionID",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[Stage].[SP_eBoekhouden_Get_Muties_ForMutatieRegelsExtract]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "AzureDB_BrabantMaatjes",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
 				}
 			}
 		],
