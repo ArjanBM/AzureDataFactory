@@ -1,0 +1,56 @@
+{
+	"name": "SQL_Stage_eBoekhouden_MutatieRegels",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDB_BrabantMaatjes",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "eBoekhouden"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "type",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "date",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "invoiceNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "ledgerId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "amount",
+				"type": "decimal",
+				"precision": 9,
+				"scale": 2
+			},
+			{
+				"name": "entryNumber",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Stage",
+			"table": "eBoekhouden_Mutaties"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
