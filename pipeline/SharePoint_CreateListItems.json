@@ -71,7 +71,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[Model].[CreateSharepointListItems]",
+						"sqlReaderStoredProcedureName": "[Core].[SP_SharePoint_CreateListItems]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
