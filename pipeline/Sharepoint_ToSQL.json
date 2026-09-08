@@ -45,7 +45,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[Model].[SharepointListItemsToProductOverview]"
+					"storedProcedureName": "[Stage].[SP_SharePoint_ListItemsToProductOverview]"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureDB_BrabantMaatjes",
