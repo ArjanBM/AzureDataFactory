@@ -73,7 +73,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[Model].[UpdateSharepointListItems]",
+						"sqlReaderStoredProcedureName": "[Core].[SP_SharePoint_UpdateListItems]",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
