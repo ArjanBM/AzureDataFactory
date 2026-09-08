@@ -1,5 +1,5 @@
 {
-	"name": "Model_AddToSharepoint",
+	"name": "SharePoint_CreateListItems",
 	"properties": {
 		"activities": [
 			{

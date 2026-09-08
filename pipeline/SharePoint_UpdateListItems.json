@@ -1,5 +1,5 @@
 {
-	"name": "Model_UpdateSharepoint",
+	"name": "SharePoint_UpdateListItems",
 	"properties": {
 		"activities": [
 			{
