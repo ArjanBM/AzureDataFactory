@@ -115,28 +115,19 @@
 									"mappings": [
 										{
 											"source": {
-												"path": "$['id']"
+												"path": "['ledgerId']"
 											},
 											"sink": {
-												"name": "id",
+												"name": "ledgerId",
 												"type": "Int32"
 											}
 										},
 										{
 											"source": {
-												"path": "$['description']"
+												"path": "['costCenterId']"
 											},
 											"sink": {
-												"name": "mutatie_description",
-												"type": "String"
-											}
-										},
-										{
-											"source": {
-												"path": "['ledgerId']"
-											},
-											"sink": {
-												"name": "ledgerId",
+												"name": "costCenterId",
 												"type": "Int32"
 											}
 										},
@@ -152,6 +143,24 @@
 										{
 											"source": {
 												"path": "['description']"
+											},
+											"sink": {
+												"name": "mutatie_description",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['id']"
+											},
+											"sink": {
+												"name": "id",
+												"type": "Int32"
+											}
+										},
+										{
+											"source": {
+												"path": "$['description']"
 											},
 											"sink": {
 												"name": "description",
