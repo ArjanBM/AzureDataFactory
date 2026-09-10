@@ -13,172 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/ApiWooCommerce')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ApiWooCommerceProductsToSQL",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiWooCommerceProductsToSql",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "ApiWooCommerceOrdersToSQL",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ApiFooEventsCheckinToSQL",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": true
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiWooCommerceOrdersToSQL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "ApiFooEventsCheckinToSQL",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ApiWooCommerceProductsToSQL",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiFooEventsCheckinToSQL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "Proeftuin/WooCommerce"
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-08-15T18:39:36Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Model_to_Sharepoint')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Refresh Sharepoint Access Token",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Sharepoint_RefreshAuthToken",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Model_UpdateSharepoint",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Refresh Sharepoint Access Token",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Model_UpdateSharepoint",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "Model_AddToSharepoint",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Model_UpdateSharepoint",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "Model_AddToSharepoint",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "Proeftuin/Sharepoint"
-				},
-				"annotations": [],
-				"lastPublishTime": "2026-08-15T18:39:36Z"
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Sharepoint_ToSQL')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -228,7 +62,7 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"storedProcedureName": "[[Model].[SharepointListItemsToProductOverview]"
+							"storedProcedureName": "[[Stage].[SP_SharePoint_ListItemsToProductOverview]"
 						},
 						"linkedServiceName": {
 							"referenceName": "AzureDB_BrabantMaatjes",
@@ -257,7 +91,90 @@
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "Proeftuin/Sharepoint"
+					"name": "Extract/Sharepoint"
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-08-15T18:39:36Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sharepoint_UpdateAndCreate_ActiviteitenListItems')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Refresh Sharepoint Access Token",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Sharepoint_RefreshAuthToken",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Model_UpdateSharepoint",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Refresh Sharepoint Access Token",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "SharePoint_UpdateListItems",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "Model_AddToSharepoint",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Model_UpdateSharepoint",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "SharePoint_CreateListItems",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Operational/Sharepoint"
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-08-15T18:39:36Z"
@@ -328,7 +245,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "Model_to_Sharepoint",
+								"referenceName": "Sharepoint_UpdateAndCreate_ActiviteitenListItems",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -344,8 +261,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/Sharepoint_ToSQL')]",
-				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerce')]",
-				"[concat(variables('factoryId'), '/pipelines/Model_to_Sharepoint')]"
+				"[concat(variables('factoryId'), '/pipelines/Sharepoint_UpdateAndCreate_ActiviteitenListItems')]"
 			]
 		},
 		{
