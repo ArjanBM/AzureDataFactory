@@ -364,7 +364,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "[[Stage].[SP_eBoekhouden_Get_Muties_ForMutatieRegelsExtract]",
+								"sqlReaderStoredProcedureName": "[[Stage].[SP_eBoekhouden_Get_Mutaties_ForMutatieRegelsExtract]",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
