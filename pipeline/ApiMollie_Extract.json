@@ -1,0 +1,9 @@
+{
+	"name": "ApiMollie_Extract",
+	"properties": {
+		"folder": {
+			"name": "Extract/Mollie"
+		},
+		"annotations": []
+	}
+}
