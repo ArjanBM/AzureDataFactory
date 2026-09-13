@@ -4154,6 +4154,108 @@
 										"enableStaging": false,
 										"translator": {
 											"type": "TabularTranslator",
+											"mappings": [
+												{
+													"source": {
+														"path": "[['id']"
+													},
+													"sink": {
+														"name": "id",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['createdAt']"
+													},
+													"sink": {
+														"name": "createdAt",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['amount']['value']"
+													},
+													"sink": {
+														"name": "amount",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['description']"
+													},
+													"sink": {
+														"name": "description",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['metadata']['order_id']"
+													},
+													"sink": {
+														"name": "order_id",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['amountRefunded']['value']"
+													},
+													"sink": {
+														"name": "amountRefunded",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['amountRemaining']['value']"
+													},
+													"sink": {
+														"name": "amountRemaining",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['settlementId']"
+													},
+													"sink": {
+														"name": "settlementId",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['details']['consumerName']"
+													},
+													"sink": {
+														"name": "consumerName",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "[['details']['consumerAccount']"
+													},
+													"sink": {
+														"name": "consumerAccount",
+														"type": "String"
+													}
+												},
+												{
+													"source": {
+														"path": "$['[\\'lines\\']']"
+													},
+													"sink": {
+														"name": "lines",
+														"type": "String"
+													}
+												}
+											],
+											"collectionReference": "$['Column_2']",
 											"mapComplexValuesToString": true
 										}
 									},
