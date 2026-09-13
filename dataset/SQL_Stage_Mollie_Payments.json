@@ -1,5 +1,5 @@
 {
-	"name": "SQL_Load_Mollie_Payments",
+	"name": "SQL_Stage_Mollie_Payments",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDB_BrabantMaatjes",

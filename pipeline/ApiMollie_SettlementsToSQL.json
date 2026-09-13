@@ -136,7 +136,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "SQL_Load_Mollie_Settlements",
+						"referenceName": "SQL_Stage_Mollie_Settlements",
 						"type": "DatasetReference"
 					}
 				]

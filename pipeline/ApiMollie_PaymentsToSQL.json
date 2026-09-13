@@ -242,7 +242,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "SQL_Load_Mollie_Payments",
+									"referenceName": "SQL_Stage_Mollie_Payments",
 									"type": "DatasetReference"
 								}
 							]
