@@ -1,5 +1,5 @@
 {
-	"name": "SQL_Load_Mollie_Settlements",
+	"name": "SQL_Stage_Mollie_Settlements",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureDB_BrabantMaatjes",
