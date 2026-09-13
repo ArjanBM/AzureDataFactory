@@ -1522,7 +1522,7 @@
 									],
 									"outputs": [
 										{
-											"referenceName": "SQL_Load_Mollie_Payments",
+											"referenceName": "SQL_Stage_Mollie_Payments",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -1592,7 +1592,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Settlements]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[Mollie_Settlements]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -1689,7 +1689,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_Mollie_Settlements",
+								"referenceName": "SQL_Stage_Mollie_Settlements",
 								"type": "DatasetReference",
 								"parameters": {}
 							}

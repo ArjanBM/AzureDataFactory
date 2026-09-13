@@ -1140,7 +1140,7 @@
 									],
 									"outputs": [
 										{
-											"referenceName": "SQL_Load_Mollie_Payments",
+											"referenceName": "SQL_Stage_Mollie_Payments",
 											"type": "DatasetReference",
 											"parameters": {}
 										}
@@ -1168,7 +1168,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/AzureDB_BrabantMaatjes')]",
 				"[concat(variables('factoryId'), '/datasets/RestAPI_Mollie')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_Mollie_Payments')]"
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_Mollie_Payments')]"
 			]
 		},
 		{
@@ -1432,7 +1432,7 @@
 							},
 							"sink": {
 								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Settlements]",
+								"preCopyScript": "TRUNCATE TABLE [Stage].[Mollie_Settlements]",
 								"writeBehavior": "insert",
 								"sqlWriterUseTableLock": false,
 								"disableMetricsCollection": false
@@ -1529,7 +1529,7 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SQL_Load_Mollie_Settlements",
+								"referenceName": "SQL_Stage_Mollie_Settlements",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1578,7 +1578,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/RestAPI_Mollie')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_Load_Mollie_Settlements')]"
+				"[concat(variables('factoryId'), '/datasets/SQL_Stage_Mollie_Settlements')]"
 			]
 		},
 		{
@@ -3514,7 +3514,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Payments')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_Mollie_Payments')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3583,7 +3583,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Settlements')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_Mollie_Settlements')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {

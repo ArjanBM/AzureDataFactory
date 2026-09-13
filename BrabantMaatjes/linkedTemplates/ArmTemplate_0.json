@@ -938,7 +938,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Payments')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_Mollie_Payments')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1007,7 +1007,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Load_Mollie_Settlements')]",
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_Mollie_Settlements')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
