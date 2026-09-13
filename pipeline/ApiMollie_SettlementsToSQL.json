@@ -39,7 +39,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [Load].[Mollie_Settlements]",
+						"preCopyScript": "TRUNCATE TABLE [Stage].[Mollie_Settlements]",
 						"writeBehavior": "insert",
 						"sqlWriterUseTableLock": false,
 						"disableMetricsCollection": false
