@@ -118,7 +118,7 @@
 									"mappings": [
 										{
 											"source": {
-												"path": "$['Column_2'][0]['id']"
+												"path": "['id']"
 											},
 											"sink": {
 												"name": "id",
@@ -127,7 +127,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['createdAt']"
+												"path": "['createdAt']"
 											},
 											"sink": {
 												"name": "createdAt",
@@ -136,7 +136,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['amount']['value']"
+												"path": "['amount']['value']"
 											},
 											"sink": {
 												"name": "amount",
@@ -145,7 +145,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['description']"
+												"path": "['description']"
 											},
 											"sink": {
 												"name": "description",
@@ -154,7 +154,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['metadata']['order_id']"
+												"path": "['metadata']['order_id']"
 											},
 											"sink": {
 												"name": "order_id",
@@ -163,7 +163,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['amountRefunded']['value']"
+												"path": "['amountRefunded']['value']"
 											},
 											"sink": {
 												"name": "amountRefunded",
@@ -172,7 +172,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['amountRemaining']['value']"
+												"path": "['amountRemaining']['value']"
 											},
 											"sink": {
 												"name": "amountRemaining",
@@ -181,7 +181,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['settlementId']"
+												"path": "['settlementId']"
 											},
 											"sink": {
 												"name": "settlementId",
@@ -190,7 +190,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['details']['consumerName']"
+												"path": "['details']['consumerName']"
 											},
 											"sink": {
 												"name": "consumerName",
@@ -199,7 +199,7 @@
 										},
 										{
 											"source": {
-												"path": "$['Column_2'][0]['details']['consumerAccount']"
+												"path": "['details']['consumerAccount']"
 											},
 											"sink": {
 												"name": "consumerAccount",
@@ -208,7 +208,7 @@
 										},
 										{
 											"source": {
-												"path": "$['[\\'lines\\']']"
+												"path": "['lines']"
 											},
 											"sink": {
 												"name": "lines",
