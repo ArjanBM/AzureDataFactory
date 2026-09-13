@@ -1,6 +1,70 @@
 {
 	"name": "ApiMollie_Extract",
 	"properties": {
+		"activities": [
+			{
+				"name": "ApiMollie_RefreshAuthToken",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiMollie_RefreshAuthToken",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ApiMollie_SettlementsToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ApiMollie_RefreshAuthToken",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiMollie_SettlementsToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ApiMollie_PaymentsToSQL",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ApiMollie_SettlementsToSQL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApiMollie_PaymentsToSQL",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
 		"folder": {
 			"name": "Extract/Mollie"
 		},
