@@ -938,6 +938,70 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SQL_Stage_FooEvents_Checkin')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDB_BrabantMaatjes",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "WooCommerce"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Ticket_Id",
+						"type": "bigint",
+						"precision": 19
+					},
+					{
+						"name": "Order_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Product_Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Ticket_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "TicketStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Ticket_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "EventLogStatus",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EventLogStatus_Modified",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Stage",
+					"table": "FooEvents_Checkin"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SQL_Stage_Mollie_Payments')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1057,70 +1121,6 @@
 				"typeProperties": {
 					"schema": "Stage",
 					"table": "Mollie_Settlements"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureDB_BrabantMaatjes')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQL_Stage_FooEvents_Checkin')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureDB_BrabantMaatjes",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "WooCommerce"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Ticket_Id",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "Order_Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Product_Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Ticket_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "TicketStatus",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Ticket_Modified",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "EventLogStatus",
-						"type": "nvarchar"
-					},
-					{
-						"name": "EventLogStatus_Modified",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "Stage",
-					"table": "FooEvents_Checkin"
 				}
 			},
 			"dependsOn": [
