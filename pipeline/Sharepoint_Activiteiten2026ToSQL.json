@@ -138,6 +138,14 @@
 								"sink": {
 									"name": "Categorie"
 								}
+							},
+							{
+								"source": {
+									"path": "['Kostenplaats']"
+								},
+								"sink": {
+									"name": "Kostenplaats"
+								}
 							}
 						],
 						"collectionReference": "$['value']",
