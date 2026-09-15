@@ -80,7 +80,8 @@
 									"path": "['field_1']"
 								},
 								"sink": {
-									"name": "Datum"
+									"name": "Datum",
+									"type": "DateTime"
 								}
 							},
 							{
@@ -88,7 +89,8 @@
 									"path": "['SKU']"
 								},
 								"sink": {
-									"name": "SKU"
+									"name": "SKU",
+									"type": "String"
 								}
 							},
 							{
@@ -96,7 +98,8 @@
 									"path": "['field_11']"
 								},
 								"sink": {
-									"name": "Aanmeldingen"
+									"name": "Aanmeldingen",
+									"type": "Int32"
 								}
 							},
 							{
@@ -104,15 +107,17 @@
 									"path": "['DatumLaatsteAanmelding']"
 								},
 								"sink": {
-									"name": "DatumLaatsteAanmelding"
+									"name": "DatumLaatsteAanmelding",
+									"type": "DateTime"
 								}
 							},
 							{
 								"source": {
-									"path": "['Kernregio']"
+									"path": "['Kernegio']"
 								},
 								"sink": {
-									"name": "KernRegio"
+									"name": "KernRegio",
+									"type": "String"
 								}
 							},
 							{
@@ -120,7 +125,8 @@
 									"path": "['field_6']"
 								},
 								"sink": {
-									"name": "Opgezet"
+									"name": "Opgezet",
+									"type": "String"
 								}
 							},
 							{
@@ -128,7 +134,8 @@
 									"path": "['Activiteitstatus']"
 								},
 								"sink": {
-									"name": "Status"
+									"name": "Status",
+									"type": "String"
 								}
 							},
 							{
@@ -136,7 +143,8 @@
 									"path": "['Categorie']"
 								},
 								"sink": {
-									"name": "Categorie"
+									"name": "Categorie",
+									"type": "String"
 								}
 							},
 							{
@@ -144,7 +152,8 @@
 									"path": "['Kostenplaats']"
 								},
 								"sink": {
-									"name": "Kostenplaats"
+									"name": "Kostenplaats",
+									"type": "String"
 								}
 							}
 						],
