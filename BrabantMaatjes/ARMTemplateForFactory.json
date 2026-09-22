@@ -893,6 +893,92 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ApiMollie_Extract')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ApiMollie_RefreshAuthToken",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_RefreshAuthToken",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "ApiMollie_SettlementsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ApiMollie_RefreshAuthToken",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_SettlementsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "ApiMollie_PaymentsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ApiMollie_SettlementsToSQL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_PaymentsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"folder": {
+					"name": "Extract/Mollie"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_RefreshAuthToken')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_SettlementsToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_PaymentsToSQL')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ApiMollie_PaymentsToSQL')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2660,7 +2746,8 @@
 											"path": "[['field_1']"
 										},
 										"sink": {
-											"name": "Datum"
+											"name": "Datum",
+											"type": "DateTime"
 										}
 									},
 									{
@@ -2668,7 +2755,8 @@
 											"path": "[['SKU']"
 										},
 										"sink": {
-											"name": "SKU"
+											"name": "SKU",
+											"type": "String"
 										}
 									},
 									{
@@ -2676,7 +2764,8 @@
 											"path": "[['field_11']"
 										},
 										"sink": {
-											"name": "Aanmeldingen"
+											"name": "Aanmeldingen",
+											"type": "Int32"
 										}
 									},
 									{
@@ -2684,15 +2773,17 @@
 											"path": "[['DatumLaatsteAanmelding']"
 										},
 										"sink": {
-											"name": "DatumLaatsteAanmelding"
+											"name": "DatumLaatsteAanmelding",
+											"type": "DateTime"
 										}
 									},
 									{
 										"source": {
-											"path": "[['Kernregio']"
+											"path": "[['Kernegio']"
 										},
 										"sink": {
-											"name": "KernRegio"
+											"name": "KernRegio",
+											"type": "String"
 										}
 									},
 									{
@@ -2700,7 +2791,8 @@
 											"path": "[['field_6']"
 										},
 										"sink": {
-											"name": "Opgezet"
+											"name": "Opgezet",
+											"type": "String"
 										}
 									},
 									{
@@ -2708,7 +2800,8 @@
 											"path": "[['Activiteitstatus']"
 										},
 										"sink": {
-											"name": "Status"
+											"name": "Status",
+											"type": "String"
 										}
 									},
 									{
@@ -2716,7 +2809,17 @@
 											"path": "[['Categorie']"
 										},
 										"sink": {
-											"name": "Categorie"
+											"name": "Categorie",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Kostenplaats']"
+										},
+										"sink": {
+											"name": "Kostenplaats",
+											"type": "String"
 										}
 									}
 								],
@@ -4271,7 +4374,7 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Stopped",
+				"runtimeState": "Started",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -4302,92 +4405,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/DailyUpdate')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ApiMollie_Extract')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ApiMollie_RefreshAuthToken",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiMollie_RefreshAuthToken",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "ApiMollie_SettlementsToSQL",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ApiMollie_RefreshAuthToken",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiMollie_SettlementsToSQL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "ApiMollie_PaymentsToSQL",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ApiMollie_SettlementsToSQL",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiMollie_PaymentsToSQL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"folder": {
-					"name": "Extract/Mollie"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ApiMollie_RefreshAuthToken')]",
-				"[concat(variables('factoryId'), '/pipelines/ApiMollie_SettlementsToSQL')]",
-				"[concat(variables('factoryId'), '/pipelines/ApiMollie_PaymentsToSQL')]"
 			]
 		}
 	]

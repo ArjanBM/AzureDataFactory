@@ -2636,7 +2636,8 @@
 											"path": "[['field_1']"
 										},
 										"sink": {
-											"name": "Datum"
+											"name": "Datum",
+											"type": "DateTime"
 										}
 									},
 									{
@@ -2644,7 +2645,8 @@
 											"path": "[['SKU']"
 										},
 										"sink": {
-											"name": "SKU"
+											"name": "SKU",
+											"type": "String"
 										}
 									},
 									{
@@ -2652,7 +2654,8 @@
 											"path": "[['field_11']"
 										},
 										"sink": {
-											"name": "Aanmeldingen"
+											"name": "Aanmeldingen",
+											"type": "Int32"
 										}
 									},
 									{
@@ -2660,15 +2663,17 @@
 											"path": "[['DatumLaatsteAanmelding']"
 										},
 										"sink": {
-											"name": "DatumLaatsteAanmelding"
+											"name": "DatumLaatsteAanmelding",
+											"type": "DateTime"
 										}
 									},
 									{
 										"source": {
-											"path": "[['Kernregio']"
+											"path": "[['Kernegio']"
 										},
 										"sink": {
-											"name": "KernRegio"
+											"name": "KernRegio",
+											"type": "String"
 										}
 									},
 									{
@@ -2676,7 +2681,8 @@
 											"path": "[['field_6']"
 										},
 										"sink": {
-											"name": "Opgezet"
+											"name": "Opgezet",
+											"type": "String"
 										}
 									},
 									{
@@ -2684,7 +2690,8 @@
 											"path": "[['Activiteitstatus']"
 										},
 										"sink": {
-											"name": "Status"
+											"name": "Status",
+											"type": "String"
 										}
 									},
 									{
@@ -2692,7 +2699,17 @@
 											"path": "[['Categorie']"
 										},
 										"sink": {
-											"name": "Categorie"
+											"name": "Categorie",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "[['Kostenplaats']"
+										},
+										"sink": {
+											"name": "Kostenplaats",
+											"type": "String"
 										}
 									}
 								],
@@ -2761,13 +2778,13 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ApiWooCommerce')]",
+			"name": "[concat(parameters('factoryName'), '/ApiMollie_Extract')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "ApiWooCommerceProductsToSQL",
+						"name": "ApiMollie_RefreshAuthToken",
 						"type": "ExecutePipeline",
 						"dependsOn": [],
 						"policy": {
@@ -2776,7 +2793,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "ApiWooCommerceProductsToSql",
+								"referenceName": "ApiMollie_RefreshAuthToken",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -2784,37 +2801,13 @@
 						}
 					},
 					{
-						"name": "ApiWooCommerceOrdersToSQL",
+						"name": "ApiMollie_SettlementsToSQL",
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
-								"activity": "ApiFooEventsCheckinToSQL",
+								"activity": "ApiMollie_RefreshAuthToken",
 								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"policy": {
-							"secureInput": true
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "ApiWooCommerceOrdersToSQL",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "ApiFooEventsCheckinToSQL",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "ApiWooCommerceProductsToSQL",
-								"dependencyConditions": [
-									"Completed"
+									"Succeeded"
 								]
 							}
 						],
@@ -2824,7 +2817,31 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "ApiFooEventsCheckinToSQL",
+								"referenceName": "ApiMollie_SettlementsToSQL",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "ApiMollie_PaymentsToSQL",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "ApiMollie_SettlementsToSQL",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "ApiMollie_PaymentsToSQL",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -2836,15 +2853,13 @@
 					"elapsedTimeMetric": {}
 				},
 				"folder": {
-					"name": "Extract/WooCommerce"
+					"name": "Extract/Mollie"
 				},
-				"annotations": [],
-				"lastPublishTime": "2026-08-15T18:39:36Z"
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerceProductsToSql')]",
-				"[concat(variables('factoryId'), '/pipelines/ApiWooCommerceOrdersToSQL')]",
-				"[concat(variables('factoryId'), '/pipelines/ApiFooEventsCheckinToSQL')]"
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_SettlementsToSQL')]",
+				"[concat(variables('factoryId'), '/pipelines/ApiMollie_PaymentsToSQL')]"
 			]
 		}
 	]
